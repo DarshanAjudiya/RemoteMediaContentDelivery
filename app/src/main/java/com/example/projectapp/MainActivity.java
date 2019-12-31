@@ -35,12 +35,15 @@ public class MainActivity extends AppCompatActivity {
         anims.setDuration(2000);
         imageView.setAnimation(anims);
         imageView.setLayoutParams(new FrameLayout.LayoutParams(1000,500));
-        //layout.addView(imageView);
+        layout.addView(imageView,0);
         VideoView videoView=new VideoView(this);
         videoView.setVideoURI(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.animvideo));
         FrameLayout.LayoutParams param=new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         videoView.setLayoutParams(param);
-        layout.addView(videoView);
+        videoView.setX(0);
+        System.out.println("Height:"+imageView.getHeight());
+        videoView.setY(500);
+        layout.addView(videoView,1);
 
         videoView.start();
         videoView.setAnimation(anims);

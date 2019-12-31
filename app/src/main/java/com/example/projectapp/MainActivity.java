@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.graphics.Color;
 import android.net.Uri;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getData data=new getData();
         data.execute();
-        FrameLayout layout=(FrameLayout)findViewById(R.id.fragmentContainer);
+        FrameLayout layout= findViewById(R.id.fragmentContainer);
 
 
         ImageView imageView=new ImageView(this);
@@ -34,7 +35,16 @@ public class MainActivity extends AppCompatActivity {
         anims.setDuration(2000);
         imageView.setAnimation(anims);
         imageView.setLayoutParams(new FrameLayout.LayoutParams(1000,500));
-        layout.addView(imageView);
+        //layout.addView(imageView);
+        VideoView videoView=new VideoView(this);
+        videoView.setVideoURI(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.animvideo));
+        FrameLayout.LayoutParams param=new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        videoView.setLayoutParams(param);
+        layout.addView(videoView);
+
+        videoView.start();
+        videoView.setAnimation(anims);
+
        /* View view = getview(type);
         if (view!=null)
         {

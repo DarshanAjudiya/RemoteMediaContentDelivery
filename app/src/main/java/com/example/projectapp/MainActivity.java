@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         data.execute();
         FrameLayout layout= findViewById(R.id.fragmentContainer);
 
+/*
 
         ImageView imageView=new ImageView(this);
         imageView.setImageResource(R.drawable.b);
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         videoView.start();
         videoView.setAnimation(anims);
+*/
 
        /* View view = getview(type);
         if (view!=null)

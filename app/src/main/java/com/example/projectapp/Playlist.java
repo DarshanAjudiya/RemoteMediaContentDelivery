@@ -8,8 +8,8 @@ public class Playlist {
     private Integer id;
     private String name;
     private Integer height,width;
-    private List<Slide> slides=new ArrayList<Slide>();
-
+    private List<Slide> slides;
+/*
     public Playlist(String type, Integer id, String name, Integer height, Integer width, List<Slide> slides) {
         this.type = type;
         this.id = id;
@@ -18,7 +18,7 @@ public class Playlist {
         this.width = width;
         this.slides = slides;
 
-    }
+    }*/
 
 
     public String getType() {
@@ -62,6 +62,7 @@ public class Playlist {
     }
     public void printall()
     {
+        System.out.println("playlist");
         System.out.println(type);
         System.out.println(id);
         System.out.println(name);

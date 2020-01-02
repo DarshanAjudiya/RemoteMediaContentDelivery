@@ -22,7 +22,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         try {
-            URL url=new URL("https://api.myjson.com/bins/f4zbo");
+            URL url=new URL("https://api.myjson.com/bins/ad4o8");
 
             HttpURLConnection connection=(HttpURLConnection)url.openConnection();
             InputStream iostream=connection.getInputStream();
@@ -41,7 +41,6 @@ public class getData extends AsyncTask<Void, Void, Void> {
             {
                 myplaylist.printall();
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

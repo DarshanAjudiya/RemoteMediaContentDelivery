@@ -25,11 +25,10 @@ public class DatabseHelper extends SQLiteOpenHelper {
         //slides table
         db.execSQL("create table "+slides+"(sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate integer,animation integer,audio integer)");
         //component table
-        db.execSQL("create table "+component+"(cid integer,sid integer,type text,left_pos integer,right_pos integer,top_pos integer,bottom_pos integer,width real,height real,uri text,shadow integer,scalex integer,scaley integer,z_index integer,angle integer,onclick text,uri text,html text,animate integer,enteranim integer,exitanim integer)");
+        db.execSQL("create table "+component+"(cid integer,sid integer,type text,left_pos integer,right_pos integer,top_pos integer,bottom_pos integer,width real,height real,uri text,shadow text,scalex integer,scaley integer,z_index integer,opacity real,angle integer,onclick text,animate integer,enteranim integer,exitanim integer)");
         //animation table
         db.execSQL("create table "+animations+"(animid integer,type text,duration integer,delay integer)");
-        //shadow table
-        db.execSQL("");
+
     }
 
     @Override

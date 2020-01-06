@@ -20,6 +20,13 @@ public class Playlist {
 
     }*/
 
+    public List<Slide> getSlides() {
+        return slides;
+    }
+
+    public void setSlides(List<Slide> slides) {
+        this.slides = slides;
+    }
 
     public String getType() {
         return type;

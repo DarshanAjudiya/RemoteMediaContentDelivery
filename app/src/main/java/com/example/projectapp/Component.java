@@ -17,7 +17,7 @@ public class Component {
     private Integer angle;
     private Double opacity;
     private String onClick;
-    private Boolean is_animate;
+    private Boolean is_animate=false;
     private Animate enter_animation;
     private Animate exit_animation;
 
@@ -155,14 +155,17 @@ public class Component {
 
     public void setIs_animate(Boolean is_animate) {
         this.is_animate = is_animate;
+
     }
 
     public Animate getEnter_animation() {
         return enter_animation;
     }
 
-    public void setEnter_animation(Animate enter_animation) {
+    public void setEnter_animation(Animate enter_animation)
+    {
         this.enter_animation = enter_animation;
+        System.out.println("Enter animation set");
     }
 
     public Animate getExit_animation() {
@@ -171,6 +174,7 @@ public class Component {
 
     public void setExit_animation(Animate exit_animation) {
         this.exit_animation = exit_animation;
+        System.out.println("Exit animation set");
     }
 
     public Component(Integer id, String type, Integer left, Integer right, Integer top, Integer bottom, Double width, Double height, String uri, String shadow, Integer scaleX, Integer scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, Animate enter_animation, Animate exit_animation) {
@@ -210,11 +214,14 @@ public class Component {
         System.out.println(scaleY);
         System.out.println(z_index);
         System.out.println(angle);
-        System.out.println(is_animate);
         System.out.println(onClick);
         System.out.println(opacity);
         System.out.println(uri);
         System.out.println(shadow);
-
+        System.out.println("animate:"+is_animate);
+        if(exit_animation!=null)
+        enter_animation.printall();
+        if(exit_animation!=null)
+        exit_animation.printall();
     }
 }

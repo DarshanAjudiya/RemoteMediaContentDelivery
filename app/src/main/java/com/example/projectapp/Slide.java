@@ -142,8 +142,10 @@ public class Slide {
         System.out.println(bgImageUri);
         System.out.println(duration);
         System.out.println(next);
+
         for(Component c:components)
             c.printall();
+
     }
 
 }

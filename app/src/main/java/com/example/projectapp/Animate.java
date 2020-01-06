@@ -34,4 +34,11 @@ public class Animate {
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
+    public void printall()
+    {
+        System.out.println("Animation");;
+        System.out.println(type);
+        System.out.println(duration);
+        System.out.println(delay);
+    }
 }

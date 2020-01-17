@@ -1,6 +1,8 @@
-package com.example.projectapp;
+package com.example.projectapp.model;
 
-public class Component {
+import com.example.projectapp.model.AnimationModel;
+
+public class ComponentModel {
     private Integer id;
     private String type;
     private Integer left;
@@ -18,8 +20,8 @@ public class Component {
     private Double opacity;
     private String onClick;
     private Boolean is_animate=false;
-    private Animate enter_animation;
-    private Animate exit_animation;
+    private AnimationModel enter_animation;
+    private AnimationModel exit_animation;
 
     public Integer getId() {
         return id;
@@ -158,26 +160,26 @@ public class Component {
 
     }
 
-    public Animate getEnter_animation() {
+    public AnimationModel getEnter_animation() {
         return enter_animation;
     }
 
-    public void setEnter_animation(Animate enter_animation)
+    public void setEnter_animation(AnimationModel enter_animation)
     {
         this.enter_animation = enter_animation;
         System.out.println("Enter animation set");
     }
 
-    public Animate getExit_animation() {
+    public AnimationModel getExit_animation() {
         return exit_animation;
     }
 
-    public void setExit_animation(Animate exit_animation) {
+    public void setExit_animation(AnimationModel exit_animation) {
         this.exit_animation = exit_animation;
         System.out.println("Exit animation set");
     }
 
-    public Component(Integer id, String type, Integer left, Integer right, Integer top, Integer bottom, Double width, Double height, String uri, String shadow, Integer scaleX, Integer scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, Animate enter_animation, Animate exit_animation) {
+    public ComponentModel(Integer id, String type, Integer left, Integer right, Integer top, Integer bottom, Double width, Double height, String uri, String shadow, Integer scaleX, Integer scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, AnimationModel enter_animation, AnimationModel exit_animation) {
         this.id = id;
         this.type = type;
         this.left = left;
@@ -201,7 +203,7 @@ public class Component {
 
     public void printall()
     {
-        System.out.println("Component");
+        System.out.println("ComponentModel");
         System.out.println(type);
         System.out.println(id);
         System.out.println(left);

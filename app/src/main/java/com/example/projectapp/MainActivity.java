@@ -1,30 +1,42 @@
 package com.example.projectapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.core.app.ActivityCompat;
 
-import android.graphics.Color;
-import android.net.Uri;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.VideoView;
+
+import com.example.projectapp.model.PlaylistModel;
+import com.example.projectapp.model.SlideModel;
 
 public class MainActivity extends AppCompatActivity {
-    String type;
+    public String[] EXTERNAL_PERMISSIONS={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    DatabaseHelper helper;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getData data=new getData(this);
+
+        helper = new DatabaseHelper(this);
+
+        checkpermision();
+
+        getData data = new getData(this);
         data.execute();
 
         FrameLayout layout= findViewById(R.id.fragmentContainer);
+
+        PlaylistModel list1=helper.getplaylist(null);
+        if(list1!=null)
+        {
+            SlideModel slide=helper.getSlide(list1.getId(),null);
+
+        }
 
 /*
 
@@ -57,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
         }*/
     }
-    public View getview(String type)
+
+   /* public View getview(String type)
     {
         switch(type)
         {
@@ -71,8 +84,22 @@ public class MainActivity extends AppCompatActivity {
             default:        return null;
         }
 
+    }*/
+
+
+
+
+    public void checkpermision()
+    {
+        int permission= ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if(permission!=PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this,EXTERNAL_PERMISSIONS,1);
+        }
+        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.INSTALL_PACKAGES)!=PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.INSTALL_PACKAGES},1);
+        }
     }
-
-
 
 }

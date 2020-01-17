@@ -1,11 +1,11 @@
-package com.example.projectapp;
+package com.example.projectapp.model;
 
-public class Animate {
+public class AnimationModel {
     private String type;
     private Integer delay;
     private Integer duration;
 
-    public Animate(String type, Integer delay, Integer duration) {
+    public AnimationModel(String type, Integer delay, Integer duration) {
         this.type = type;
         this.delay = delay;
         this.duration = duration;

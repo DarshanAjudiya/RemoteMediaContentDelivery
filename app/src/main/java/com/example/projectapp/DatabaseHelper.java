@@ -8,6 +8,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.example.projectapp.model.AnimationModel;
+import com.example.projectapp.model.ComponentModel;
+import com.example.projectapp.model.PlaylistModel;
+import com.example.projectapp.model.SlideModel;
+
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
             public static final String DBNAME="mediacontent";
             public static final String playlist="playlist";
@@ -25,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //playlist table
         db.execSQL("create table "+playlist+"(pid integer primary key ,name text,height  real, width real)");
         //slides table
-        db.execSQL("create table "+slides+"(uid integer primary key autoincrement,sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate integer,animationid integer,audio integer)");
+        db.execSQL("create table "+slides+"(uid integer primary key autoincrement,sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate numeric,animationid integer,audio integer)");
         //component table
         db.execSQL("create table "+component+"(cid integer,sid integer,type text,left_pos integer,right_pos integer,top_pos integer,bottom_pos integer,width real,height real,uri text,shadow text,scalex integer,scaley integer,z_index integer,opacity real,angle integer,onclick text,animate integer,enteranim integer,exitanim integer)");
         //animation table
@@ -40,7 +47,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     db.execSQL("drop table if exists "+animations);
     this.onCreate(db);
     }
-    public int insert_playlist(Playlist list)
+    public int insert_playlist(PlaylistModel list)
     {
 
         ContentValues values=new ContentValues();
@@ -48,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("name",list.getName());
         values.put("height",list.getHeight());
         values.put("width",list.getWidth());
-        for(Slide s:list.getSlides())
+        for(SlideModel s:list.getSlides())
             insert_slide(s,list.getId());
         SQLiteDatabase db=this.getWritableDatabase();
         int x= (int) db.insert(playlist,null,values);
@@ -56,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return x;
     }
 
-    public int insert_slide(Slide slide,int pid)
+    public int insert_slide(SlideModel slide, int pid)
     {
 
         ContentValues values=new ContentValues();
@@ -91,13 +98,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(c.moveToFirst())
         {
             int uid=c.getInt(c.getColumnIndex("uid"));
-            for(Component comp:slide.getComponents())
+            for(ComponentModel comp:slide.getComponents())
                 insert_component(comp,uid);
         }
         db.close();
         return 0;
     }
-    public int insert_component(Component component,int uid)
+    public int insert_component(ComponentModel component, int uid)
     {
 
         ContentValues values=new ContentValues();
@@ -134,7 +141,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return (int) row;
     }
 
-    public int insert_anim(Animate animate)
+    public int insert_anim(AnimationModel animate)
     {
         SQLiteDatabase db=getWritableDatabase();
         ContentValues values=new ContentValues();
@@ -150,4 +157,104 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return x;
     }
+
+    public PlaylistModel getplaylist(@Nullable Integer id)
+    {
+        SQLiteDatabase db=getReadableDatabase();
+        Cursor c;
+        if(id!=null)
+        c = db.query(playlist,null,"pid=?",new String[]{""+id},null,null,null);
+        else
+            c = db.query(playlist,null,null,null,null,null,"pid");
+
+        PlaylistModel list=null;
+        if(c.moveToFirst())
+        {
+            list=new PlaylistModel(c.getInt(0),c.getString(1),c.getInt(2),c.getInt(3),null);
+            return list;
+        }
+        return null;
+    }
+    public SlideModel getSlide(Integer pid, @Nullable Integer sid)
+    {
+        SQLiteDatabase db=getReadableDatabase();
+
+        Cursor c;
+        if(sid!=null)
+            c = db.query(slides,null,"pid=? AND sid=?",new String[]{""+pid,""+sid},null,null,"sid");
+        else
+            c = db.query(slides,null,"pid=? AND",new String[]{""+pid},null,null,"sid");
+        SlideModel slide=null;
+        if(c.moveToFirst())
+        {
+            Boolean anim=(c.getInt(c.getColumnIndex("animate"))==1);
+            String name=c.getString(c.getColumnIndex("name"));
+            String bgcolor=c.getString(c.getColumnIndex("bgcolor"));
+            Integer bgimage=c.getInt(c.getColumnIndex("bgimage"));
+            Integer duration=c.getInt(c.getColumnIndex("duration"));
+            Integer next=c.getInt(c.getColumnIndex("next"));
+            Integer audio=c.getInt(c.getColumnIndex("audio"));
+            slide=new SlideModel(sid,bgimage,duration,next,null,audio,anim,name,bgcolor,null);
+
+            if(anim)
+            {
+                Integer aid=c.getInt(c.getColumnIndex("animationid"));
+                Cursor c2=db.query(animations,null,"animid=?",new String[]{""+aid},null,null,null);
+                if(c2.moveToFirst())
+                {
+                    slide.setAniduration(c2.getInt(c2.getColumnIndex("duration")));
+                    slide.setAnimation(c2.getString(c2.getColumnIndex("type")));
+                }
+            }
+
+            List<ComponentModel> components = null;
+            Cursor comp=db.query(component,null,"sid=?",new String[]{""+sid},null,null,"cid");
+            if(comp.moveToFirst()) {
+                do
+                {
+                    Integer id=comp.getInt(comp.getColumnIndex("cid"));
+                    String type=comp.getString(comp.getColumnIndex("type"));
+                    Integer left=comp.getInt(comp.getColumnIndex("left_pos"));
+                    Integer right=comp.getInt(comp.getColumnIndex("right_pos"));
+                    Integer top=comp.getInt(comp.getColumnIndex("top_pos"));
+                    Integer bottom=comp.getInt(comp.getColumnIndex("bottom_pos"));
+                    Double width=comp.getDouble(comp.getColumnIndex("width"));
+                    Double height=comp.getDouble(comp.getColumnIndex("height"));
+                    String uri=comp.getString(comp.getColumnIndex("uri"));
+                    String shadow=comp.getString(comp.getColumnIndex("shadow"));
+                    Integer scalex=comp.getInt(comp.getColumnIndex("scalex"));
+                    Integer scaley=comp.getInt(comp.getColumnIndex("scaley"));
+                    Integer zindex=comp.getInt(comp.getColumnIndex("z_index"));
+                    Integer angle=comp.getInt(comp.getColumnIndex("angle"));
+                    Double opacity=comp.getDouble(comp.getColumnIndex("opacity"));
+                    String onclick=comp.getString(comp.getColumnIndex("onclick"));
+                    Boolean animate=(comp.getInt(comp.getColumnIndex("animate"))==1);
+                    AnimationModel enter=null,exit=null;
+
+                    if(animate)
+                    {
+                        Cursor c2=db.query(animations,null,"animid=?",new String[]{""+comp.getInt(comp.getColumnIndex("enteranim"))},null,null,null);
+                        if(c2.moveToFirst())
+                        {
+                            enter=new AnimationModel(c2.getString(c2.getColumnIndex("type")),c2.getInt(c2.getColumnIndex("delay")),c2.getInt(c2.getColumnIndex("duration")));
+                        }
+
+                        c2=db.query(animations,null,"animid=?",new String[]{""+comp.getInt(comp.getColumnIndex("exitanim"))},null,null,null);
+                        if(c2.moveToFirst())
+                        {
+                            exit=new AnimationModel(c2.getString(c2.getColumnIndex("type")),c2.getInt(c2.getColumnIndex("delay")),c2.getInt(c2.getColumnIndex("duration")));
+                        }
+
+                    }
+
+                    components.add(new ComponentModel(id,type,left,right,top,bottom,width,height,uri,shadow,scalex,scaley,zindex,angle,opacity,onclick,animate,enter,exit));
+                }while(comp.moveToNext());
+                slide.setComponents(components);
+
+            }
+            return slide;
+        }
+        return null;
+    }
+
 }

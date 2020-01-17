@@ -2,6 +2,7 @@ package com.example.projectapp;
 
 import android.os.AsyncTask;
 
+import com.example.projectapp.model.PlaylistModel;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -36,7 +37,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
             }
             System.out.println(data);
             Gson gson=new Gson();
-            Playlist myplaylist =gson.fromJson(data,Playlist.class);
+            PlaylistModel myplaylist =gson.fromJson(data, PlaylistModel.class);
 
             if(myplaylist!=null)
             {

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Projectapp</string>
+    <string name="checkupdateurl"></string>
+    <string name="applicationurl">https://github.com/DarshanAjudiya/sqliteexample/blob/master/app/release/app-release.apk?raw=true</string>
 </resources>

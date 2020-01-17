@@ -1,40 +1,34 @@
-package com.example.projectapp;
+package com.example.projectapp.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Playlist {
-    private String type;
+public class PlaylistModel {
     private Integer id;
     private String name;
     private Integer height,width;
-    private List<Slide> slides;
-/*
-    public Playlist(String type, Integer id, String name, Integer height, Integer width, List<Slide> slides) {
-        this.type = type;
+    private List<SlideModel> slides;
+
+    public PlaylistModel(Integer id, String name, Integer height, Integer width, List<SlideModel> slides) {
+
         this.id = id;
         this.name = name;
         this.height = height;
         this.width = width;
         this.slides = slides;
 
-    }*/
+    }
 
-    public List<Slide> getSlides() {
+    public List<SlideModel> getSlides() {
         return slides;
     }
 
-    public void setSlides(List<Slide> slides) {
+    public void setSlides(List<SlideModel> slides) {
         this.slides = slides;
     }
 
-    public String getType() {
-        return type;
-    }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+
+
 
     public Integer getId() {
         return id;
@@ -70,12 +64,11 @@ public class Playlist {
     public void printall()
     {
         System.out.println("playlist");
-        System.out.println(type);
         System.out.println(id);
         System.out.println(name);
         System.out.println(height);
         System.out.println(width);
-        for(Slide s:slides)
+        for(SlideModel s:slides)
         {
             s.printall();
         }

@@ -1,19 +1,21 @@
-package com.example.projectapp;
+package com.example.projectapp.model;
+
+import com.example.projectapp.model.ComponentModel;
 
 import java.util.List;
 
-public class Slide {
-    private String type;
+public class SlideModel {
+
     private Integer id,bgimage,duration,next,aniduration,audio;
     private Boolean animate;
-    private String name,bgImageUri,bgcolor,animation;
-    private List<Component> components;
+    private String name,bgcolor,animation;
+    private List<ComponentModel> components;
 
-    public List<Component> getComponents() {
+    public List<ComponentModel> getComponents() {
         return components;
     }
 
-    public void setComponents(List<Component> components) {
+    public void setComponents(List<ComponentModel> components) {
         this.components = components;
     }
 
@@ -25,8 +27,8 @@ public class Slide {
         this.name = name;
     }
 
-    public Slide(String type, Integer id, Integer bgimage, Integer duration, Integer next, Integer aniduration, Integer audio, Boolean animate, String name, String bgImageUri, String bgcolor, String animation) {
-        this.type = type;
+    public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer aniduration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
+
         this.id = id;
         this.bgimage = bgimage;
         this.duration = duration;
@@ -35,18 +37,11 @@ public class Slide {
         this.audio = audio;
         this.animate = animate;
         this.name = name;
-        this.bgImageUri = bgImageUri;
         this.bgcolor = bgcolor;
         this.animation = animation;
     }
 
-    public String getType() {
-        return type;
-    }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public Integer getId() {
         return id;
@@ -120,18 +115,18 @@ public class Slide {
         this.animation = animation;
     }
 
-    public String getBgImageUri() {
+  /*  public String getBgImageUri() {
         return bgImageUri;
     }
 
     public void setBgImageUri(String bgImageUri) {
         this.bgImageUri = bgImageUri;
     }
-
+*/
     public void printall()
     {
         System.out.println("slides");
-        System.out.println(type);
+
         System.out.println(id);
         System.out.println(aniduration);
         System.out.println(animate);
@@ -139,11 +134,11 @@ public class Slide {
         System.out.println(audio);
         System.out.println(bgcolor);
         System.out.println(bgimage);
-        System.out.println(bgImageUri);
+   //     System.out.println(bgImageUri);
         System.out.println(duration);
         System.out.println(next);
 
-        for(Component c:components)
+        for(ComponentModel c:components)
             c.printall();
 
     }

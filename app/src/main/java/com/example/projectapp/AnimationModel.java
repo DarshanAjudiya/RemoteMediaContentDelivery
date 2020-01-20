@@ -1,4 +1,8 @@
-package com.example.projectapp.model;
+package com.example.projectapp;
+
+import android.content.Context;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 public class AnimationModel {
     private String type;
@@ -34,11 +38,31 @@ public class AnimationModel {
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
-    public void printall()
-    {
-        System.out.println("Animation");;
+
+    public void printall() {
+        System.out.println("Animation");
+        ;
         System.out.println(type);
         System.out.println(duration);
         System.out.println(delay);
+    }
+
+    public Animation getAnimation(Context context) {
+        Animation animation=null;
+        animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
+        switch(type)
+        {
+            case "slde-in":
+
+                break;
+
+        }
+
+        if (duration != null)
+            animation.setDuration(duration);
+        if (delay != null)
+            animation.setStartOffset(delay * 1000);
+
+        return animation;
     }
 }

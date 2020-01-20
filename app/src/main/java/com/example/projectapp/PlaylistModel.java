@@ -1,4 +1,4 @@
-package com.example.projectapp.model;
+package com.example.projectapp;
 
 import java.util.List;
 
@@ -73,4 +73,5 @@ public class PlaylistModel {
             s.printall();
         }
     }
+
 }

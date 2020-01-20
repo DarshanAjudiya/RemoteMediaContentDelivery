@@ -1,15 +1,21 @@
-package com.example.projectapp.model;
+package com.example.projectapp;
 
-import com.example.projectapp.model.ComponentModel;
+import android.content.Context;
+import android.graphics.Color;
+import android.widget.FrameLayout;
+
+import androidx.core.content.ContextCompat;
 
 import java.util.List;
 
 public class SlideModel {
 
     private Integer id,bgimage,duration,next,aniduration,audio;
-    private Boolean animate;
+    private Boolean animate=false;
     private String name,bgcolor,animation;
     private List<ComponentModel> components;
+    PlaylistModel playlist;
+    FrameLayout layout;
 
     public List<ComponentModel> getComponents() {
         return components;
@@ -35,6 +41,7 @@ public class SlideModel {
         this.next = next;
         this.aniduration = aniduration;
         this.audio = audio;
+        if(animate!=null)
         this.animate = animate;
         this.name = name;
         this.bgcolor = bgcolor;
@@ -96,6 +103,7 @@ public class SlideModel {
     }
 
     public void setAnimate(Boolean animate) {
+        if(animate!=null)
         this.animate = animate;
     }
 
@@ -143,4 +151,20 @@ public class SlideModel {
 
     }
 
+
+    public void init(Context context,PlaylistModel playlist)
+    {
+        this.playlist=playlist;
+        FrameLayout.LayoutParams layoutParams;
+        if(playlist.getHeight()==0)
+            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        else
+            layoutParams=new FrameLayout.LayoutParams(playlist.getWidth(),playlist.getHeight());
+        layout=new FrameLayout(context);
+        layout.setLayoutParams(layoutParams);
+        layout.setBackgroundColor(Color.parseColor(bgcolor));
+        layout.setBackground(ContextCompat.getDrawable(context,bgimage));
+
+
+    }
 }

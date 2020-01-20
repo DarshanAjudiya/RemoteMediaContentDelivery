@@ -2,7 +2,6 @@ package com.example.projectapp;
 
 import android.os.AsyncTask;
 
-import com.example.projectapp.model.PlaylistModel;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;

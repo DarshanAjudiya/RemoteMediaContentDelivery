@@ -8,9 +8,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
-import com.example.projectapp.model.PlaylistModel;
-import com.example.projectapp.model.SlideModel;
-
 public class MainActivity extends AppCompatActivity {
     public String[] EXTERNAL_PERMISSIONS={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -32,11 +29,8 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout layout= findViewById(R.id.fragmentContainer);
 
         PlaylistModel list1=helper.getplaylist(null);
-        if(list1!=null)
-        {
-            SlideModel slide=helper.getSlide(list1.getId(),null);
-
-        }
+        list1.setHeight(0);
+        list1.setWidth(0);
 
 /*
 

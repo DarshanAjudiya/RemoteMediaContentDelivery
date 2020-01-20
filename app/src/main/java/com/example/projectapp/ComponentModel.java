@@ -1,6 +1,9 @@
-package com.example.projectapp.model;
+package com.example.projectapp;
 
-import com.example.projectapp.model.AnimationModel;
+import android.content.Context;
+import android.view.View;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 
 public class ComponentModel {
     private Integer id;
@@ -19,9 +22,12 @@ public class ComponentModel {
     private Integer angle;
     private Double opacity;
     private String onClick;
-    private Boolean is_animate=false;
+    private Boolean is_animate = false;
     private AnimationModel enter_animation;
     private AnimationModel exit_animation;
+
+    View view;
+    private Context context;
 
     public Integer getId() {
         return id;
@@ -156,7 +162,8 @@ public class ComponentModel {
     }
 
     public void setIs_animate(Boolean is_animate) {
-        this.is_animate = is_animate;
+        if (is_animate != null)
+            this.is_animate = is_animate;
 
     }
 
@@ -164,8 +171,7 @@ public class ComponentModel {
         return enter_animation;
     }
 
-    public void setEnter_animation(AnimationModel enter_animation)
-    {
+    public void setEnter_animation(AnimationModel enter_animation) {
         this.enter_animation = enter_animation;
         System.out.println("Enter animation set");
     }
@@ -196,13 +202,13 @@ public class ComponentModel {
         this.angle = angle;
         this.opacity = opacity;
         this.onClick = onClick;
-        this.is_animate = is_animate;
+        if (is_animate != null)
+            this.is_animate = is_animate;
         this.enter_animation = enter_animation;
         this.exit_animation = exit_animation;
     }
 
-    public void printall()
-    {
+    public void printall() {
         System.out.println("ComponentModel");
         System.out.println(type);
         System.out.println(id);
@@ -220,10 +226,49 @@ public class ComponentModel {
         System.out.println(opacity);
         System.out.println(uri);
         System.out.println(shadow);
-        System.out.println("animate:"+is_animate);
-        if(exit_animation!=null)
-        enter_animation.printall();
-        if(exit_animation!=null)
-        exit_animation.printall();
+        System.out.println("animate:" + is_animate);
+        if (exit_animation != null)
+            enter_animation.printall();
+        if (exit_animation != null)
+            exit_animation.printall();
+    }
+
+    public void init(Context context) {
+        this.context = context;
+        if (type.equals("Image")) {
+            MyimageView myimageView = new MyimageView(context, this);
+            view = myimageView.createview();
+        } else if (type.equals("VideoView")) {
+
+        } else if (type.equals("playlist")) {
+
+        } else {
+
+        }
+
+        if (is_animate) {
+            if (enter_animation != null) {
+                Animation enteranimation = enter_animation.getAnimation(context);
+
+            }
+            if (exit_animation != null) {
+                Animation exitanimation = exit_animation.getAnimation(context);
+            }
+        }
+
+    }
+
+    View createview() {
+        ImageView imageview = new ImageView(context);
+        imageview.setImageResource(id);
+        if (scaleX != null)
+            imageview.setX(scaleX);
+        if (scaleY != null)
+            imageview.setY(scaleY);
+        if (angle != null)
+            imageview.setRotation(angle);
+        if(opacity!=null)
+            imageview.
+        return imageview;
     }
 }

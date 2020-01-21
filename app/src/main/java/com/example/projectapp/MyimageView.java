@@ -20,6 +20,7 @@ public class MyimageView  {
             imageview.setX(model.getScaleX());
         if(model.getScaleY()!=null)
             imageview.setY(model.getScaleY());
+
         imageview.setRotation(model.getAngle());
 
         return imageview;

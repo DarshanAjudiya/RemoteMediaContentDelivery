@@ -1,9 +1,12 @@
 package com.example.projectapp;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.view.animation.Animation;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 public class ComponentModel {
     private Integer id;
@@ -25,7 +28,7 @@ public class ComponentModel {
     private Boolean is_animate = false;
     private AnimationModel enter_animation;
     private AnimationModel exit_animation;
-
+    private Boolean is_videoview=false;
     View view;
     private Context context;
 
@@ -236,10 +239,10 @@ public class ComponentModel {
     public void init(Context context) {
         this.context = context;
         if (type.equals("Image")) {
-            MyimageView myimageView = new MyimageView(context, this);
-            view = myimageView.createview();
-        } else if (type.equals("VideoView")) {
+            view = createImageview();
 
+        } else if (type.equals("Video")) {
+            view = createVideoview();
         } else if (type.equals("playlist")) {
 
         } else {
@@ -255,20 +258,35 @@ public class ComponentModel {
                 Animation exitanimation = exit_animation.getAnimation(context);
             }
         }
-
+        if(opacity!=null)
+            view.setAlpha(opacity.floatValue());
+        if(z_index!=null)
+            view.setZ(z_index);
     }
 
-    View createview() {
+    View createImageview() {
         ImageView imageview = new ImageView(context);
-        imageview.setImageResource(id);
+
+            imageview.setImageResource(context.getApplicationContext().getResources().getIdentifier(""+id,"drawable",context.getPackageName()));
+
         if (scaleX != null)
             imageview.setX(scaleX);
         if (scaleY != null)
             imageview.setY(scaleY);
         if (angle != null)
             imageview.setRotation(angle);
-        if(opacity!=null)
-            imageview.
+
         return imageview;
+    }
+    View createVideoview(){
+        VideoView videoView=new VideoView(context);
+
+        videoView.setVideoURI(Uri.parse("android.resdource://"+context.getApplicationContext().getPackageName()+"/"+id));
+        is_videoview=true;
+        return videoView;
+    }
+    View createWebview()
+    {
+      //  WebView webview=
     }
 }

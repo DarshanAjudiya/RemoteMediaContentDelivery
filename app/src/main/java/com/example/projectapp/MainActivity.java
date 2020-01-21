@@ -5,8 +5,15 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.VideoView;
 
 public class MainActivity extends AppCompatActivity {
     public String[] EXTERNAL_PERMISSIONS={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -27,13 +34,14 @@ public class MainActivity extends AppCompatActivity {
         data.execute();
 
         FrameLayout layout= findViewById(R.id.fragmentContainer);
-
         PlaylistModel list1=helper.getplaylist(null);
         list1.setHeight(0);
         list1.setWidth(0);
 
-/*
 
+
+
+/*
         ImageView imageView=new ImageView(this);
         imageView.setImageResource(R.drawable.b);
         imageView.setScaleType(ImageView.ScaleType.FIT_START);
@@ -43,18 +51,27 @@ public class MainActivity extends AppCompatActivity {
         anims.setDuration(2000);
         imageView.setAnimation(anims);
         imageView.setLayoutParams(new FrameLayout.LayoutParams(1000,500));
-        layout.addView(imageView,0);
         VideoView videoView=new VideoView(this);
         videoView.setVideoURI(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.animvideo));
         FrameLayout.LayoutParams param=new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         videoView.setLayoutParams(param);
         videoView.setX(0);
+        videoView.setZ(2);
         System.out.println("Height:"+imageView.getHeight());
-        videoView.setY(500);
-        layout.addView(videoView,1);
+        videoView.setY(200);
 
+
+        WebView webView =new WebView(this);
+        webView.loadUrl("https://stackoverflow.com/questions/35669413/why-framelayout-isnt-setting-z-order-correctly-in-my-layout");
+        webView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        webView.setZ(1);
+
+        layout.addView(videoView);
+        layout.addView(webView);
+        layout.addView(imageView);
         videoView.start();
         videoView.setAnimation(anims);
+
 */
 
        /* View view = getview(type);

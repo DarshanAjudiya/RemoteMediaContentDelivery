@@ -2,11 +2,17 @@ package com.example.projectapp;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
 import android.view.View;
 import android.view.animation.Animation;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.VideoView;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ComponentModel {
     private Integer id;
@@ -28,7 +34,7 @@ public class ComponentModel {
     private Boolean is_animate = false;
     private AnimationModel enter_animation;
     private AnimationModel exit_animation;
-    private Boolean is_videoview=false;
+    private Boolean is_videoview = false;
     View view;
     private Context context;
 
@@ -236,38 +242,43 @@ public class ComponentModel {
             exit_animation.printall();
     }
 
-    public void init(Context context) {
+    public void init(Context context)
+    {
         this.context = context;
-        if (type.equals("Image")) {
+        if (type.equals("Image"))
+        {
             view = createImageview();
 
-        } else if (type.equals("Video")) {
+        } else if (type.equals("Video"))
+        {
             view = createVideoview();
-        } else if (type.equals("playlist")) {
+        }
+        else if (type.equals("playlist"))
+        {
 
-        } else {
-
+        }
+        else {
+            view = createWebview();
         }
 
         if (is_animate) {
             if (enter_animation != null) {
                 Animation enteranimation = enter_animation.getAnimation(context);
-
             }
             if (exit_animation != null) {
                 Animation exitanimation = exit_animation.getAnimation(context);
             }
         }
-        if(opacity!=null)
+        if (opacity != null)
             view.setAlpha(opacity.floatValue());
-        if(z_index!=null)
+        if (z_index != null)
             view.setZ(z_index);
     }
 
-    View createImageview() {
+    private View createImageview() {
         ImageView imageview = new ImageView(context);
 
-            imageview.setImageResource(context.getApplicationContext().getResources().getIdentifier(""+id,"drawable",context.getPackageName()));
+        imageview.setImageResource(context.getApplicationContext().getResources().getIdentifier("" + id, "drawable", context.getPackageName()));
 
         if (scaleX != null)
             imageview.setX(scaleX);
@@ -278,15 +289,35 @@ public class ComponentModel {
 
         return imageview;
     }
-    View createVideoview(){
-        VideoView videoView=new VideoView(context);
 
-        videoView.setVideoURI(Uri.parse("android.resdource://"+context.getApplicationContext().getPackageName()+"/"+id));
-        is_videoview=true;
+    private View createVideoview() {
+        VideoView videoView = new VideoView(context);
+
+        videoView.setVideoURI(Uri.parse("android.resdource://" + context.getApplicationContext().getPackageName() + "/" + id));
+        is_videoview = true;
         return videoView;
     }
-    View createWebview()
-    {
-      //  WebView webview=
+
+    private View createWebview() {
+        WebView webview = new WebView(context);
+        String data = "";
+        File htmlfile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
+        try {
+
+            htmlfile.createNewFile();
+
+            FileReader reader = new FileReader(htmlfile);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String temp;
+
+            while ((temp = bufferedReader.readLine()) != null) {
+                data += temp;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        webview.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
+
+        return webview;
     }
 }

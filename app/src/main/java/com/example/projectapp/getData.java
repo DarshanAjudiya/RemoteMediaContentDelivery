@@ -25,8 +25,8 @@ public class getData extends AsyncTask<Void, Void, Void> {
             URL url=new URL("https://api.myjson.com/bins/ad4o8");
 
             HttpURLConnection connection=(HttpURLConnection)url.openConnection();
-            InputStream iostream=connection.getInputStream();
-            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(iostream));
+            InputStream inputStream=connection.getInputStream();
+            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
             String line=bufferedReader.readLine();
             String data="";
             while(line!=null)
@@ -40,14 +40,23 @@ public class getData extends AsyncTask<Void, Void, Void> {
 
             if(myplaylist!=null)
             {
-
-                helper.insert_playlist(myplaylist);
                 myplaylist.printall();
+                int count= helper.insert_playlist(myplaylist);
+                System.out.println("playlist added :"+count);
+            }
+            else
+            {
+                System.out.println("playlist is null");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
     }
 }

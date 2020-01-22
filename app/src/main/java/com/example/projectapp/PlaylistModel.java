@@ -74,4 +74,9 @@ public class PlaylistModel {
         }
     }
 
+    void setview()
+    {
+
+    }
+
 }

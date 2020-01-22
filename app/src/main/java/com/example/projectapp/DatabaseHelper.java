@@ -158,11 +158,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         PlaylistModel list = null;
         if (c.moveToFirst()) {
-
+            System.out.println();
             list = new PlaylistModel(c.getInt(0), c.getString(1), c.getInt(2), c.getInt(3), getSlide(c.getInt(0)));
             return list;
         }
-        return null;
+        return  list;
     }
 
     public List<SlideModel> getSlide(Integer pid) {

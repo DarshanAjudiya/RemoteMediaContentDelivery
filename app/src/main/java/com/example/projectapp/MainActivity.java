@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.VideoView;
 
 public class MainActivity extends AppCompatActivity {
-    public String[] EXTERNAL_PERMISSIONS={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    public String[] EXTERNAL_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     DatabaseHelper helper;
 
@@ -32,14 +32,11 @@ public class MainActivity extends AppCompatActivity {
 
         getData data = new getData(this);
         data.execute();
-
-        FrameLayout layout= findViewById(R.id.fragmentContainer);
-        PlaylistModel list1=helper.getplaylist(null);
+        FrameLayout layout = findViewById(R.id.fragmentContainer);
+       /* PlaylistModel list1 = helper.getplaylist(null);
         list1.setHeight(0);
         list1.setWidth(0);
-
-
-
+        list1.printall();*/
 
 /*
         ImageView imageView=new ImageView(this);
@@ -72,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
         videoView.start();
         videoView.setAnimation(anims);
 
-*/
 
-       /* View view = getview(type);
+        View view = getview(type);
         if (view!=null)
         {
 
@@ -97,19 +93,13 @@ public class MainActivity extends AppCompatActivity {
 
     }*/
 
-
-
-
-    public void checkpermision()
-    {
-        int permission= ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if(permission!=PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this,EXTERNAL_PERMISSIONS,1);
+    public void checkpermision() {
+        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, EXTERNAL_PERMISSIONS, 1);
         }
-        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.INSTALL_PACKAGES)!=PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.INSTALL_PACKAGES},1);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INSTALL_PACKAGES) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INSTALL_PACKAGES}, 1);
         }
     }
 

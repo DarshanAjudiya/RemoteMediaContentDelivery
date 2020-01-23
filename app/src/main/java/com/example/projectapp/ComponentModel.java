@@ -1,13 +1,19 @@
 package com.example.projectapp;
 
+import android.app.ActionBar;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
 import android.view.animation.Animation;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.VideoView;
+
+import com.example.projectapp.extras.convert;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,12 +21,12 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class ComponentModel {
+    private SlideModel slideModel;
     private Integer id;
     private String type;
-    private Integer left;
-    private Integer right;
-    private Integer top;
-    private Integer bottom;
+    private Integer left=0;
+    private Integer top=0;
+
     private Double width;
     private Double height;
     private String uri;
@@ -35,8 +41,9 @@ public class ComponentModel {
     private AnimationModel enter_animation;
     private AnimationModel exit_animation;
     private Boolean is_videoview = false;
-    View view;
+    private View view=null;
     private Context context;
+
 
     public Integer getId() {
         return id;
@@ -62,13 +69,6 @@ public class ComponentModel {
         this.left = left;
     }
 
-    public Integer getRight() {
-        return right;
-    }
-
-    public void setRight(Integer right) {
-        this.right = right;
-    }
 
     public Integer getTop() {
         return top;
@@ -78,13 +78,6 @@ public class ComponentModel {
         this.top = top;
     }
 
-    public Integer getBottom() {
-        return bottom;
-    }
-
-    public void setBottom(Integer bottom) {
-        this.bottom = bottom;
-    }
 
     public Double getWidth() {
         return width;
@@ -194,13 +187,11 @@ public class ComponentModel {
         System.out.println("Exit animation set");
     }
 
-    public ComponentModel(Integer id, String type, Integer left, Integer right, Integer top, Integer bottom, Double width, Double height, String uri, String shadow, Integer scaleX, Integer scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, AnimationModel enter_animation, AnimationModel exit_animation) {
+    public ComponentModel(Integer id, String type, Integer left, Integer top, Double width, Double height, String uri, String shadow, Integer scaleX, Integer scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, AnimationModel enter_animation, AnimationModel exit_animation) {
         this.id = id;
         this.type = type;
         this.left = left;
-        this.right = right;
         this.top = top;
-        this.bottom = bottom;
         this.width = width;
         this.height = height;
         this.uri = uri;
@@ -222,9 +213,7 @@ public class ComponentModel {
         System.out.println(type);
         System.out.println(id);
         System.out.println(left);
-        System.out.println(right);
         System.out.println(top);
-        System.out.println(bottom);
         System.out.println(height);
         System.out.println(width);
         System.out.println(scaleX);
@@ -242,28 +231,25 @@ public class ComponentModel {
             exit_animation.printall();
     }
 
-    public void init(Context context)
-    {
+    public void init(Context context, SlideModel slideModel) {
+
+        this.slideModel = slideModel;
         this.context = context;
-        if (type.equals("Image"))
-        {
+        if (type.equals("Image")) {
             view = createImageview();
 
-        } else if (type.equals("Video"))
-        {
+        } else if (type.equals("Video")) {
             view = createVideoview();
-        }
-        else if (type.equals("playlist"))
-        {
+        } else if (type.equals("playlist")) {
 
-        }
-        else {
+        } else {
             view = createWebview();
         }
 
         if (is_animate) {
             if (enter_animation != null) {
                 Animation enteranimation = enter_animation.getAnimation(context);
+                view.setAnimation(enteranimation);
             }
             if (exit_animation != null) {
                 Animation exitanimation = exit_animation.getAnimation(context);
@@ -273,51 +259,84 @@ public class ComponentModel {
             view.setAlpha(opacity.floatValue());
         if (z_index != null)
             view.setZ(z_index);
+
+
+        FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams((int)convert.dptopx(context,width),(int)convert.dptopx(context,height));
+        view.setLayoutParams(comonentlayoutparam);
+        view.setX(convert.dptopx(context, Double.valueOf(top)));
+        view.setY(convert.dptopx(context,Double.valueOf(left)));
+
+
+
     }
 
     private View createImageview() {
-        ImageView imageview = new ImageView(context);
+        ImageView imageview = null;
+        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), uri);
+        if (imagefile.exists()) {
+            Bitmap bitmapinstnce = BitmapFactory.decodeFile(imagefile.getAbsolutePath());
+            imageview = new ImageView(context);
+            //imageview.setImageResource(context.getApplicationContext().getResources().getIdentifier("" + id, "drawable", context.getPackageName()));
+            imageview.setImageBitmap(bitmapinstnce);
+            if (scaleX != null)
+                imageview.setX(scaleX);
+            if (scaleY != null)
+                imageview.setY(scaleY);
+            if (angle != null)
+                imageview.setRotation(angle);
+        } else {
 
-        imageview.setImageResource(context.getApplicationContext().getResources().getIdentifier("" + id, "drawable", context.getPackageName()));
-
-        if (scaleX != null)
-            imageview.setX(scaleX);
-        if (scaleY != null)
-            imageview.setY(scaleY);
-        if (angle != null)
-            imageview.setRotation(angle);
+        }
 
         return imageview;
     }
 
-    private View createVideoview() {
-        VideoView videoView = new VideoView(context);
 
-        videoView.setVideoURI(Uri.parse("android.resdource://" + context.getApplicationContext().getPackageName() + "/" + id));
-        is_videoview = true;
+    private View createVideoview() {
+        VideoView videoView = null;
+        File videofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), uri);
+        if (videofile.exists()) {
+            videoView = new VideoView(context);
+            videoView.setVideoPath(videofile.getAbsolutePath());
+            videoView.start();
+//            videoView.setVideoURI(Uri.parse("android.resdource://" + context.getApplicationContext().getPackageName() + "/" + id));
+            is_videoview = true;
+        } else {
+
+        }
         return videoView;
     }
+
 
     private View createWebview() {
         WebView webview = new WebView(context);
         String data = "";
         File htmlfile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
-        try {
+        if (htmlfile.exists()) {
+            try {
 
-            htmlfile.createNewFile();
+                htmlfile.createNewFile();
 
-            FileReader reader = new FileReader(htmlfile);
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            String temp;
+                FileReader reader = new FileReader(htmlfile);
+                BufferedReader bufferedReader = new BufferedReader(reader);
+                String temp;
 
-            while ((temp = bufferedReader.readLine()) != null) {
-                data += temp;
+                while ((temp = bufferedReader.readLine()) != null) {
+                    data += temp;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        webview.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
 
+            webview.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
+        } else {
+
+        }
         return webview;
+    }
+
+    public View getView() {
+
+        return view;
     }
 }

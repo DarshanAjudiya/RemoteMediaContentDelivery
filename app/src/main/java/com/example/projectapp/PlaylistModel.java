@@ -1,5 +1,8 @@
 package com.example.projectapp;
 
+import android.content.Context;
+import android.view.View;
+
 import java.util.List;
 
 public class PlaylistModel {
@@ -7,6 +10,9 @@ public class PlaylistModel {
     private String name;
     private Integer height,width;
     private List<SlideModel> slides;
+    Context context;
+
+
 
     public PlaylistModel(Integer id, String name, Integer height, Integer width, List<SlideModel> slides) {
 
@@ -74,9 +80,29 @@ public class PlaylistModel {
         }
     }
 
-    void setview()
+
+    public void init(Context context)
+    {
+        this.context=context;
+        for(SlideModel slide:slides)
+        {
+            slide.init(context,this);
+        }
+    }
+
+    Boolean hasnext()
     {
 
+        return false;
+    }
+    View getNextSlide()
+    {
+        return null;
+    }
+    View getSlide()
+    {
+        View view=slides.get(0).getView();
+        return view;
     }
 
 }

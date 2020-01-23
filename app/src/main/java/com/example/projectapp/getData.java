@@ -2,12 +2,19 @@ package com.example.projectapp;
 
 import android.os.AsyncTask;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -35,9 +42,31 @@ public class getData extends AsyncTask<Void, Void, Void> {
                 line=bufferedReader.readLine();
             }
             System.out.println(data);
-            Gson gson=new Gson();
-            PlaylistModel myplaylist =gson.fromJson(data, PlaylistModel.class);
 
+            ExclusionStrategy exclusionStrategy = new ExclusionStrategy() {
+
+                @Override
+                public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+                    return false;
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return clazz == Field.class || clazz == Method.class;
+                }
+            };
+            PlaylistModel myplaylist=null;
+try {
+    Gson gson = new GsonBuilder()
+            .addSerializationExclusionStrategy(exclusionStrategy)
+            .addDeserializationExclusionStrategy(exclusionStrategy)
+            .create();
+
+    myplaylist = gson.fromJson(data, PlaylistModel.class);
+}catch(JsonSyntaxException e)
+{
+    e.printStackTrace();
+}
             if(myplaylist!=null)
             {
                 myplaylist.printall();
@@ -48,7 +77,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
             {
                 System.out.println("playlist is null");
             }
-        } catch (IOException e) {
+        } catch (IOException e ) {
             e.printStackTrace();
         }
 

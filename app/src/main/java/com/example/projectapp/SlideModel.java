@@ -2,6 +2,7 @@ package com.example.projectapp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.core.content.ContextCompat;
@@ -10,9 +11,9 @@ import java.util.List;
 
 public class SlideModel {
 
-    private Integer id,bgimage,duration,next,aniduration,audio;
-    private Boolean animate=false;
-    private String name,bgcolor,animation;
+    private Integer id, bgimage, duration, next, aniduration, audio;
+    private Boolean animate = false;
+    private String name, bgcolor, animation;
     private List<ComponentModel> components;
     PlaylistModel playlist;
     FrameLayout layout;
@@ -41,13 +42,12 @@ public class SlideModel {
         this.next = next;
         this.aniduration = aniduration;
         this.audio = audio;
-        if(animate!=null)
-        this.animate = animate;
+        if (animate != null)
+            this.animate = animate;
         this.name = name;
         this.bgcolor = bgcolor;
         this.animation = animation;
     }
-
 
 
     public Integer getId() {
@@ -103,8 +103,8 @@ public class SlideModel {
     }
 
     public void setAnimate(Boolean animate) {
-        if(animate!=null)
-        this.animate = animate;
+        if (animate != null)
+            this.animate = animate;
     }
 
     public String getBgcolor() {
@@ -123,16 +123,15 @@ public class SlideModel {
         this.animation = animation;
     }
 
-  /*  public String getBgImageUri() {
-        return bgImageUri;
-    }
+    /*  public String getBgImageUri() {
+          return bgImageUri;
+      }
 
-    public void setBgImageUri(String bgImageUri) {
-        this.bgImageUri = bgImageUri;
-    }
-*/
-    public void printall()
-    {
+      public void setBgImageUri(String bgImageUri) {
+          this.bgImageUri = bgImageUri;
+      }
+  */
+    public void printall() {
         System.out.println("slides");
 
         System.out.println(id);
@@ -142,29 +141,38 @@ public class SlideModel {
         System.out.println(audio);
         System.out.println(bgcolor);
         System.out.println(bgimage);
-   //     System.out.println(bgImageUri);
+        //     System.out.println(bgImageUri);
         System.out.println(duration);
         System.out.println(next);
 
-        for(ComponentModel c:components)
+        for (ComponentModel c : components)
             c.printall();
 
     }
 
 
-    public void init(Context context,PlaylistModel playlist)
-    {
-        this.playlist=playlist;
+    public void init(Context context, PlaylistModel playlist) {
+        this.playlist = playlist;
         FrameLayout.LayoutParams layoutParams;
-        if(playlist.getHeight()==0)
-            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        if (playlist.getHeight() == 0)
+            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         else
-            layoutParams=new FrameLayout.LayoutParams(playlist.getWidth(),playlist.getHeight());
-        layout=new FrameLayout(context);
+            layoutParams = new FrameLayout.LayoutParams(playlist.getWidth(), playlist.getHeight());
+        layout = new FrameLayout(context);
         layout.setLayoutParams(layoutParams);
         layout.setBackgroundColor(Color.parseColor(bgcolor));
-        layout.setBackground(ContextCompat.getDrawable(context,bgimage));
+        //layout.setBackground(ContextCompat.getDrawable(context, ));
+        layout.setBackgroundResource(R.drawable.a);
 
 
+    }
+
+    public View getView() {
+        for (ComponentModel component : components) {
+            View child = component.getView();
+            if (child != null)
+                layout.addView(child);
+        }
+        return layout;
     }
 }

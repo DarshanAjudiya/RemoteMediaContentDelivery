@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -29,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //slides table
         db.execSQL("create table " + slides + "(uid integer primary key autoincrement,sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate numeric,animationid integer,audio integer)");
         //component table
-        db.execSQL("create table " + component + "(cid integer,sid integer,type text,left_pos integer,right_pos integer,top_pos integer,bottom_pos integer,width real,height real,uri text,shadow text,scalex integer,scaley integer,z_index integer,opacity real,angle integer,onclick text,animate integer,enteranim integer,exitanim integer)");
+        db.execSQL("create table " + component + "(cid integer,sid integer,type text,left_pos integer, top_pos integer, width real,height real,uri text,shadow text,scalex integer,scaley integer,z_index integer,opacity real,angle integer,onclick text,animate integer,enteranim integer,exitanim integer)");
         //animation table
         db.execSQL("create table " + animations + "(animid integer primary key autoincrement,type text,duration integer,delay integer)");
     }
@@ -104,9 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("sid", uid);
         values.put("type", component.getType());
         values.put("left_pos", component.getLeft());
-        values.put("right_pos", component.getRight());
         values.put("top_pos", component.getTop());
-        values.put("bottom_pos", component.getBottom());
         values.put("width", component.getWidth());
         values.put("height", component.getHeight());
         values.put("uri", component.getUri());
@@ -167,10 +166,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public List<SlideModel> getSlide(Integer pid) {
         SQLiteDatabase db = getReadableDatabase();
-        List<SlideModel> allslides = null;
+        List<SlideModel> allslides = new ArrayList<SlideModel>();
         Cursor c;
 
-        c = db.query(slides, null, "pid=? AND", new String[]{"" + pid}, null, null, "sid");
+        c = db.query(slides, null, "pid=?", new String[]{"" + pid}, null, null, "sid");
         SlideModel slide = null;
         if (c.moveToFirst()) {
             do {
@@ -195,16 +194,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     }
                 }
 
-                List<ComponentModel> components = null;
+                List<ComponentModel> components = new ArrayList<ComponentModel>();
                 Cursor comp = db.query(component, null, "sid=?", new String[]{"" + sid}, null, null, "cid");
                 if (comp.moveToFirst()) {
                     do {
                         Integer id = comp.getInt(comp.getColumnIndex("cid"));
                         String type = comp.getString(comp.getColumnIndex("type"));
                         Integer left = comp.getInt(comp.getColumnIndex("left_pos"));
-                        Integer right = comp.getInt(comp.getColumnIndex("right_pos"));
                         Integer top = comp.getInt(comp.getColumnIndex("top_pos"));
-                        Integer bottom = comp.getInt(comp.getColumnIndex("bottom_pos"));
                         Double width = comp.getDouble(comp.getColumnIndex("width"));
                         Double height = comp.getDouble(comp.getColumnIndex("height"));
                         String uri = comp.getString(comp.getColumnIndex("uri"));
@@ -231,7 +228,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                         }
 
-                        components.add(new ComponentModel(id, type, left, right, top, bottom, width, height, uri, shadow, scalex, scaley, zindex, angle, opacity, onclick, animate, enter, exit));
+                        components.add(new ComponentModel(id, type, left,  top,  width, height, uri, shadow, scalex, scaley, zindex, angle, opacity, onclick, animate, enter, exit));
                     } while (comp.moveToNext());
                     slide.setComponents(components);
 

@@ -164,14 +164,20 @@ public class SlideModel {
         //layout.setBackground(ContextCompat.getDrawable(context, ));
         layout.setBackgroundResource(R.drawable.a);
 
+        for(ComponentModel componentModel:components)
+        {
+            componentModel.init(context,this);
+        }
 
     }
 
     public View getView() {
         for (ComponentModel component : components) {
             View child = component.getView();
-            if (child != null)
+            if (child != null) {
+                System.out.println("child added:"+child);
                 layout.addView(child);
+            }
         }
         return layout;
     }

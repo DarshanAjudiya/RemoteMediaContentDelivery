@@ -31,14 +31,14 @@ public class MainActivity extends AppCompatActivity {
         checkpermision();
 
         getData data = new getData(this);
-        data.execute();
+        //data.execute();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
-     /*   PlaylistModel list1 = helper.getplaylist(null);
+        PlaylistModel list1 = helper.getplaylist(null);
         list1.setHeight(0);
         list1.setWidth(0);
         list1.printall();
         list1.init(this);
-        layout.addView(list1.getSlide());*/
+        layout.addView(list1.getSlide());
 
 /*
         ImageView imageView=new ImageView(this);

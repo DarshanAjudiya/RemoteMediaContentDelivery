@@ -72,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("next", slide.getNext());
         values.put("animate", slide.getAnimate());
         values.put("audio", slide.getAudio());
-        if (slide.getAnimate()!=null &&slide.getAnimate()) {
+        if (slide.getAnimate() != null && slide.getAnimate()) {
             ContentValues val = new ContentValues();
             val.put("duration", slide.getAniduration());
             val.put("type", slide.getAnimation());
@@ -113,7 +113,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("scalex", component.getScaleX());
         values.put("scaley", component.getScaleY());
         values.put("z_index", component.getZ_index());
-        values.put("opacity", component.getOpacity());
+        if (component.getOpacity() == null)
+            values.put("opacity", 1);
+        else
+            values.put("opacity", component.getOpacity());
+
         values.put("angle", component.getAngle());
         values.put("onclick", component.getOnClick());
         values.put("animate", component.getIs_animate());
@@ -161,7 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             list = new PlaylistModel(c.getInt(0), c.getString(1), c.getInt(2), c.getInt(3), getSlide(c.getInt(0)));
             return list;
         }
-        return  list;
+        return list;
     }
 
     public List<SlideModel> getSlide(Integer pid) {
@@ -211,6 +215,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Integer zindex = comp.getInt(comp.getColumnIndex("z_index"));
                         Integer angle = comp.getInt(comp.getColumnIndex("angle"));
                         Double opacity = comp.getDouble(comp.getColumnIndex("opacity"));
+
+                        System.out.println("<--------------------------------------------\n\n\n " + opacity + "---------------------" + comp.getDouble(comp.getColumnIndex("opacity")) + "\n--------------------->\n\n\n\n");
                         String onclick = comp.getString(comp.getColumnIndex("onclick"));
                         Boolean animate = (comp.getInt(comp.getColumnIndex("animate")) == 1);
                         AnimationModel enter = null, exit = null;
@@ -228,7 +234,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                         }
 
-                        components.add(new ComponentModel(id, type, left,  top,  width, height, uri, shadow, scalex, scaley, zindex, angle, opacity, onclick, animate, enter, exit));
+                        components.add(new ComponentModel(id, type, left, top, width, height, uri, shadow, scalex, scaley, zindex, angle, opacity, onclick, animate, enter, exit));
                     } while (comp.moveToNext());
                     slide.setComponents(components);
 

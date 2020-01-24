@@ -22,21 +22,21 @@ import java.io.IOException;
 
 public class ComponentModel {
     private SlideModel slideModel;
-    private Integer id;
-    private String type;
+    private Integer id=null;
+    private String type=null;
     private Integer left=0;
     private Integer top=0;
 
-    private Double width;
-    private Double height;
-    private String uri;
-    private String shadow;
-    private Integer scaleX;
-    private Integer scaleY;
-    private Integer z_index;
-    private Integer angle;
-    private Double opacity;
-    private String onClick;
+    private Double width=null;
+    private Double height=null;
+    private String uri=null;
+    private String shadow=null;
+    private Integer scaleX=null;
+    private Integer scaleY=null;
+    private Integer z_index=null;
+    private Integer angle=null;
+    private Double opacity=null;
+    private String onClick=null;
     private Boolean is_animate = false;
     private AnimationModel enter_animation;
     private AnimationModel exit_animation;
@@ -246,33 +246,37 @@ public class ComponentModel {
             view = createWebview();
         }
 
-        if (is_animate) {
-            if (enter_animation != null) {
-                Animation enteranimation = enter_animation.getAnimation(context);
-                view.setAnimation(enteranimation);
+        if(view!=null) {
+            if (is_animate) {
+                if (enter_animation != null) {
+                    Animation enteranimation = enter_animation.getAnimation(context);
+                    view.setAnimation(enteranimation);
+                }
+                if (exit_animation != null) {
+                    Animation exitanimation = exit_animation.getAnimation(context);
+                }
             }
-            if (exit_animation != null) {
-                Animation exitanimation = exit_animation.getAnimation(context);
-            }
+            if (opacity != null)
+                view.setAlpha(opacity.floatValue());
+            if (z_index != null)
+                view.setZ(z_index);
+
+
+            FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams((int) convert.dptopx(context, width), (int) convert.dptopx(context, height));
+            view.setLayoutParams(comonentlayoutparam);
+            view.setX(convert.dptopx(context, Double.valueOf(top)));
+            view.setY(convert.dptopx(context, Double.valueOf(left)));
         }
-        if (opacity != null)
-            view.setAlpha(opacity.floatValue());
-        if (z_index != null)
-            view.setZ(z_index);
+        else {
 
-
-        FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams((int)convert.dptopx(context,width),(int)convert.dptopx(context,height));
-        view.setLayoutParams(comonentlayoutparam);
-        view.setX(convert.dptopx(context, Double.valueOf(top)));
-        view.setY(convert.dptopx(context,Double.valueOf(left)));
-
+        }
 
 
     }
 
     private View createImageview() {
         ImageView imageview = null;
-        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), uri);
+        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "c.jpg");
         if (imagefile.exists()) {
             Bitmap bitmapinstnce = BitmapFactory.decodeFile(imagefile.getAbsolutePath());
             imageview = new ImageView(context);
@@ -284,7 +288,14 @@ public class ComponentModel {
                 imageview.setY(scaleY);
             if (angle != null)
                 imageview.setRotation(angle);
+
+            System.out.println("imageview initialised");
         } else {
+            try {
+                imagefile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
 
@@ -301,8 +312,13 @@ public class ComponentModel {
             videoView.start();
 //            videoView.setVideoURI(Uri.parse("android.resdource://" + context.getApplicationContext().getPackageName() + "/" + id));
             is_videoview = true;
-        } else {
 
+        } else {
+            try {
+                videofile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return videoView;
     }
@@ -314,8 +330,6 @@ public class ComponentModel {
         File htmlfile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
         if (htmlfile.exists()) {
             try {
-
-                htmlfile.createNewFile();
 
                 FileReader reader = new FileReader(htmlfile);
                 BufferedReader bufferedReader = new BufferedReader(reader);
@@ -329,7 +343,13 @@ public class ComponentModel {
             }
 
             webview.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
+            System.out.println("Webview initialized:"+webview);
         } else {
+            try {
+                htmlfile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
         return webview;
@@ -337,6 +357,7 @@ public class ComponentModel {
 
     public View getView() {
 
+        System.out.println("component returned to slide:");
         return view;
     }
 }

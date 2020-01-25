@@ -262,10 +262,10 @@ public class ComponentModel {
                 view.setZ(z_index);
 
 
-            FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams((int) convert.dptopx(context, width), (int) convert.dptopx(context, height));
+            FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams(width.intValue(), height.intValue());
             view.setLayoutParams(comonentlayoutparam);
-            view.setX(convert.dptopx(context, Double.valueOf(top)));
-            view.setY(convert.dptopx(context, Double.valueOf(left)));
+            view.setX(top);
+            view.setY(left);
         }
         else {
 

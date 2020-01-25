@@ -2,6 +2,7 @@ package com.example.projectapp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -147,9 +148,7 @@ public class SlideModel {
 
         for (ComponentModel c : components)
             c.printall();
-
     }
-
 
     public void init(Context context, PlaylistModel playlist) {
         this.playlist = playlist;
@@ -157,7 +156,7 @@ public class SlideModel {
         if (playlist.getHeight() == 0)
             layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         else
-            layoutParams = new FrameLayout.LayoutParams(playlist.getWidth(), playlist.getHeight());
+            layoutParams = new FrameLayout.LayoutParams(playlist.getWidth(), playlist.getHeight(), Gravity.);
         layout = new FrameLayout(context);
         layout.setLayoutParams(layoutParams);
         layout.setBackgroundColor(Color.parseColor(bgcolor));
@@ -168,7 +167,6 @@ public class SlideModel {
         {
             componentModel.init(context,this);
         }
-
     }
 
     public View getView() {

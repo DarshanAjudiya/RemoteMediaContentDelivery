@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
@@ -34,11 +35,13 @@ public class MainActivity extends AppCompatActivity {
         //data.execute();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
         PlaylistModel list1 = helper.getplaylist(null);
-        list1.setHeight(0);
-        list1.setWidth(0);
+
         list1.printall();
         list1.init(this);
+        FrameLayout.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
+        //params.gravity= FrameLayout.Verti
         layout.addView(list1.getSlide());
+
 
 /*
         ImageView imageView=new ImageView(this);

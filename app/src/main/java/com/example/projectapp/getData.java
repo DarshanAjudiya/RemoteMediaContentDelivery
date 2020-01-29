@@ -2,11 +2,14 @@ package com.example.projectapp;
 
 import android.os.AsyncTask;
 
+import com.example.projectapp.extras.Parser;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,31 +46,12 @@ public class getData extends AsyncTask<Void, Void, Void> {
             }
             System.out.println(data);
 
-            ExclusionStrategy exclusionStrategy = new ExclusionStrategy() {
-
-                @Override
-                public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-                    return false;
-                }
-
-                @Override
-                public boolean shouldSkipClass(Class<?> clazz) {
-                    return clazz == Field.class || clazz == Method.class;
-                }
-            };
             PlaylistModel myplaylist=null;
-try {
-    Gson gson = new GsonBuilder()
-            .addSerializationExclusionStrategy(exclusionStrategy)
-            .addDeserializationExclusionStrategy(exclusionStrategy)
-            .create();
-
-    myplaylist = gson.fromJson(data, PlaylistModel.class);
-
-}catch(JsonSyntaxException e)
-{
-    e.printStackTrace();
-}
+            try {
+                myplaylist= Parser.parsetoobject(data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             if(myplaylist!=null)
             {
                 myplaylist.printall();

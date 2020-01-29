@@ -43,6 +43,8 @@ public class ComponentModel {
     private Boolean is_videoview = false;
     private View view=null;
     private Context context;
+    private Animation exitanimation;
+    private Animation enteranimation;
 
 
     public Integer getId() {
@@ -249,11 +251,11 @@ public class ComponentModel {
         if(view!=null) {
             if (is_animate) {
                 if (enter_animation != null) {
-                    Animation enteranimation = enter_animation.getAnimation(context);
-                    view.setAnimation(enteranimation);
+                    enteranimation = enter_animation.getAnimation(context);
+
                 }
                 if (exit_animation != null) {
-                    Animation exitanimation = exit_animation.getAnimation(context);
+                    exitanimation = exit_animation.getAnimation(context);
                 }
             }
             if (opacity != null)
@@ -288,7 +290,6 @@ public class ComponentModel {
                 imageview.setY(scaleY);
             if (angle != null)
                 imageview.setRotation(angle);
-
             System.out.println("imageview initialised");
         } else {
             try {
@@ -358,6 +359,10 @@ public class ComponentModel {
     public View getView() {
 
         System.out.println("component returned to slide:");
+        if(view!=null)
+        {
+
+        }
         return view;
     }
 }

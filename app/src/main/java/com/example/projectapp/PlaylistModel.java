@@ -32,10 +32,6 @@ public class PlaylistModel {
         this.slides = slides;
     }
 
-
-
-
-
     public Integer getId() {
         return id;
     }

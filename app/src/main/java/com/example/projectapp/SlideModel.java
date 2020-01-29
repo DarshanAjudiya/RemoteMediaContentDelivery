@@ -2,8 +2,10 @@ package com.example.projectapp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Layout;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.core.content.ContextCompat;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public class SlideModel {
 
-    private Integer id, bgimage, duration, next, aniduration, audio;
+    private Integer id, bgimage, duration, next, animduration, audio;
     private Boolean animate = false;
     private String name, bgcolor, animation;
     private List<ComponentModel> components;
@@ -35,13 +37,13 @@ public class SlideModel {
         this.name = name;
     }
 
-    public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer aniduration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
+    public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer animduration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
 
         this.id = id;
         this.bgimage = bgimage;
         this.duration = duration;
         this.next = next;
-        this.aniduration = aniduration;
+        this.animduration = animduration;
         this.audio = audio;
         if (animate != null)
             this.animate = animate;
@@ -84,11 +86,11 @@ public class SlideModel {
     }
 
     public Integer getAniduration() {
-        return aniduration;
+        return animduration;
     }
 
-    public void setAniduration(Integer aniduration) {
-        this.aniduration = aniduration;
+    public void setAniduration(Integer animduration) {
+        this.animduration = animduration;
     }
 
     public Integer getAudio() {
@@ -136,7 +138,7 @@ public class SlideModel {
         System.out.println("slides");
 
         System.out.println(id);
-        System.out.println(aniduration);
+        System.out.println(animduration);
         System.out.println(animate);
         System.out.println(animation);
         System.out.println(audio);
@@ -155,8 +157,10 @@ public class SlideModel {
         FrameLayout.LayoutParams layoutParams;
         if (playlist.getHeight() == 0)
             layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        else
-            layoutParams = new FrameLayout.LayoutParams(playlist.getWidth(), playlist.getHeight(), Gravity.);
+        else {
+
+            layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+        }
         layout = new FrameLayout(context);
         layout.setLayoutParams(layoutParams);
         layout.setBackgroundColor(Color.parseColor(bgcolor));

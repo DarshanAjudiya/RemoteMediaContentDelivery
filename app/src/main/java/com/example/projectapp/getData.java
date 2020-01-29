@@ -14,8 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
+
 import java.net.URL;
 
 public class getData extends AsyncTask<Void, Void, Void> {
@@ -63,6 +63,7 @@ try {
             .create();
 
     myplaylist = gson.fromJson(data, PlaylistModel.class);
+
 }catch(JsonSyntaxException e)
 {
     e.printStackTrace();

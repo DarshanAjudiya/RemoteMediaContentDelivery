@@ -1,6 +1,8 @@
 package com.example.projectapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -35,13 +37,16 @@ public class MainActivity extends AppCompatActivity {
         //data.execute();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
         PlaylistModel list1 = helper.getplaylist(null);
+        ConstraintLayout constraintLayout=findViewById(R.id.ParentLayout);
+        ConstraintSet set=new ConstraintSet();
+        set.clone(constraintLayout);
 
         list1.printall();
         list1.init(this);
-        FrameLayout.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
+        //.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
         //params.gravity= FrameLayout.Verti
         layout.addView(list1.getSlide());
-
+        set.setDimensionRatio(constraintLayout.getChildAt(0).getId(),"16:9");
 
 /*
         ImageView imageView=new ImageView(this);

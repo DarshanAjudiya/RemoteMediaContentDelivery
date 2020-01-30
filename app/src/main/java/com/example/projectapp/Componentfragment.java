@@ -19,6 +19,7 @@ public class Componentfragment extends Fragment {
     VideoView videoView;
     FrameLayout playlist;
     WebView webView;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +30,7 @@ public class Componentfragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        return inflater.inflate(R.layout.fragment_component,container);
+        return inflater.inflate(R.layout.fragment_component, container);
     }
 
     @Override

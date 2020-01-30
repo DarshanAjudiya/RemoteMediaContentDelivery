@@ -8,10 +8,9 @@ import java.util.List;
 public class PlaylistModel {
     private Integer id;
     private String name;
-    private Integer height,width;
+    private Integer height, width;
     private List<SlideModel> slides;
     Context context;
-
 
 
     public PlaylistModel(Integer id, String name, Integer height, Integer width, List<SlideModel> slides) {
@@ -63,41 +62,37 @@ public class PlaylistModel {
     public void setWidth(Integer width) {
         this.width = width;
     }
-    public void printall()
-    {
+
+    public void printall() {
         System.out.println("playlist");
         System.out.println(id);
         System.out.println(name);
         System.out.println(height);
         System.out.println(width);
-        for(SlideModel s:slides)
-        {
+        for (SlideModel s : slides) {
             s.printall();
         }
     }
 
 
-    public void init(Context context)
-    {
-        this.context=context;
-        for(SlideModel slide:slides)
-        {
-            slide.init(context,this);
+    public void init(Context context) {
+        this.context = context;
+        for (SlideModel slide : slides) {
+            slide.init(context, this);
         }
     }
 
-    Boolean hasnext()
-    {
+    Boolean hasnext() {
 
         return false;
     }
-    View getNextSlide()
-    {
+
+    View getNextSlide() {
         return null;
     }
-    View getSlide()
-    {
-        View view=slides.get(0).getView();
+
+    View getSlide() {
+        View view = slides.get(0).getView();
         return view;
     }
 

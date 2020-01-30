@@ -1,28 +1,19 @@
 package com.example.projectapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.widget.FrameLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.VideoView;
-
 public class MainActivity extends AppCompatActivity {
     public String[] EXTERNAL_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     DatabaseHelper helper;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +24,14 @@ public class MainActivity extends AppCompatActivity {
 
         checkpermision();
 
+
+
         getData data = new getData(this);
         //data.execute();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
         PlaylistModel list1 = helper.getplaylist(null);
-        ConstraintLayout constraintLayout=findViewById(R.id.ParentLayout);
-        ConstraintSet set=new ConstraintSet();
+        ConstraintLayout constraintLayout = findViewById(R.id.ParentLayout);
+        ConstraintSet set = new ConstraintSet();
         set.clone(constraintLayout);
 
         list1.printall();
@@ -46,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         //.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
         //params.gravity= FrameLayout.Verti
         layout.addView(list1.getSlide());
-        set.setDimensionRatio(constraintLayout.getChildAt(0).getId(),"16:9");
+        set.setDimensionRatio(constraintLayout.getChildAt(0).getId(), "16:9");
 
 /*
         ImageView imageView=new ImageView(this);

@@ -1,10 +1,8 @@
 package com.example.projectapp;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
 import android.view.animation.Animation;
@@ -13,8 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
-import com.example.projectapp.extras.convert;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,26 +18,26 @@ import java.io.IOException;
 
 public class ComponentModel {
     private SlideModel slideModel;
-    private Integer id=null;
-    private String type=null;
-    private Integer left=0;
-    private Integer top=0;
+    private Integer id = null;
+    private String type = null;
+    private Integer left = 0;
+    private Integer top = 0;
 
-    private Double width=null;
-    private Double height=null;
-    private String uri=null;
-    private String shadow=null;
-    private Integer scaleX=null;
-    private Integer scaleY=null;
-    private Integer z_index=null;
-    private Integer angle=null;
-    private Double opacity=null;
-    private String onClick=null;
+    private Double width = null;
+    private Double height = null;
+    private String uri = null;
+    private String shadow = null;
+    private Integer scaleX = null;
+    private Integer scaleY = null;
+    private Integer z_index = null;
+    private Integer angle = null;
+    private Double opacity = null;
+    private String onClick = null;
     private Boolean is_animate = false;
     private AnimationModel enter_animation;
     private AnimationModel exit_animation;
     private Boolean is_videoview = false;
-    private View view=null;
+    private View view = null;
     private Context context;
     private Animation exitanimation;
     private Animation enteranimation;
@@ -248,7 +244,7 @@ public class ComponentModel {
             view = createWebview();
         }
 
-        if(view!=null) {
+        if (view != null) {
             if (is_animate) {
                 if (enter_animation != null) {
                     enteranimation = enter_animation.getAnimation(context);
@@ -268,8 +264,7 @@ public class ComponentModel {
             view.setLayoutParams(comonentlayoutparam);
             view.setX(top);
             view.setY(left);
-        }
-        else {
+        } else {
 
         }
 
@@ -310,7 +305,7 @@ public class ComponentModel {
         if (videofile.exists()) {
             videoView = new VideoView(context);
             videoView.setVideoPath(videofile.getAbsolutePath());
-            videoView.start();
+
 //            videoView.setVideoURI(Uri.parse("android.resdource://" + context.getApplicationContext().getPackageName() + "/" + id));
             is_videoview = true;
 
@@ -344,7 +339,7 @@ public class ComponentModel {
             }
 
             webview.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
-            System.out.println("Webview initialized:"+webview);
+            System.out.println("Webview initialized:" + webview);
         } else {
             try {
                 htmlfile.createNewFile();
@@ -359,8 +354,12 @@ public class ComponentModel {
     public View getView() {
 
         System.out.println("component returned to slide:");
-        if(view!=null)
-        {
+        if (view != null) {
+            if (enteranimation != null)
+
+                view.startAnimation(enteranimation);
+            if (is_videoview)
+                ((VideoView) view).start();
 
         }
         return view;

@@ -48,20 +48,20 @@ public class AnimationModel {
     }
 
     public Animation getAnimation(Context context) {
-        Animation animation=null;
+        Animation animation = null;
         animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
-        switch(type)
-        {
-            case "slde-in":
+        switch (type) {
+            case "slide-in":
 
                 break;
 
         }
 
         if (duration != null)
-            animation.setDuration(duration);
+            animation.setDuration(duration*1000);
         if (delay != null)
             animation.setStartOffset(delay * 1000);
+
 
         return animation;
     }

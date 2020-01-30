@@ -2,13 +2,9 @@ package com.example.projectapp;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.Layout;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
-
-import androidx.core.content.ContextCompat;
 
 import java.util.List;
 
@@ -20,7 +16,7 @@ public class SlideModel {
     private List<ComponentModel> components;
     PlaylistModel playlist;
     FrameLayout layout;
-
+    Animation slideanim;
     public List<ComponentModel> getComponents() {
         return components;
     }
@@ -156,10 +152,10 @@ public class SlideModel {
         this.playlist = playlist;
         FrameLayout.LayoutParams layoutParams;
         if (playlist.getHeight() == 0)
-            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         else {
 
-            layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         }
         layout = new FrameLayout(context);
         layout.setLayoutParams(layoutParams);
@@ -167,9 +163,29 @@ public class SlideModel {
         //layout.setBackground(ContextCompat.getDrawable(context, ));
         layout.setBackgroundResource(R.drawable.a);
 
-        for(ComponentModel componentModel:components)
+        if (animate)
         {
-            componentModel.init(context,this);
+           AnimationModel animationModel=new AnimationModel(animation,null,animduration);
+            slideanim=animationModel.getAnimation(context);
+            slideanim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    System.out.println("...............................\n slide animation started\n............................");
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    System.out.println("...............................\n slide animation ended\n............................");
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+        }
+        for (ComponentModel componentModel : components) {
+            componentModel.init(context, this);
         }
     }
 
@@ -177,10 +193,14 @@ public class SlideModel {
         for (ComponentModel component : components) {
             View child = component.getView();
             if (child != null) {
-                System.out.println("child added:"+child);
+                System.out.println("child added:" + child);
                 layout.addView(child);
             }
+
         }
-        return layout;
+        if (animate)
+            layout.startAnimation(slideanim);
+    return layout;
+
     }
 }

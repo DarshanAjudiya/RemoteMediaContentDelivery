@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
     public String[] EXTERNAL_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -24,23 +26,26 @@ public class MainActivity extends AppCompatActivity {
 
         checkpermision();
 
-
-
-        getData data = new getData(this);
-        //data.execute();
-        FrameLayout layout = findViewById(R.id.fragmentContainer);
         PlaylistModel list1 = helper.getplaylist(null);
+        list1.init(this);
+        System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
+
+        Componentfragment componentfragment=new Componentfragment(list1.getSlide());
+        FragmentManager manager=getSupportFragmentManager();
+        FragmentTransaction transaction= manager.beginTransaction();
+        transaction.replace(R.id.fragmentContainer,componentfragment);
+        transaction.commit();
+        FrameLayout layout = findViewById(R.id.fragmentContainer);
         ConstraintLayout constraintLayout = findViewById(R.id.ParentLayout);
         ConstraintSet set = new ConstraintSet();
         set.clone(constraintLayout);
 
         list1.printall();
-        list1.init(this);
         //.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
         //params.gravity= FrameLayout.Verti
-        layout.addView(list1.getSlide());
+       // layout.addView(list1.getSlide().getView());
         set.setDimensionRatio(constraintLayout.getChildAt(0).getId(), "16:9");
-
+//set.applyTo(constraintLayout);
 /*
         ImageView imageView=new ImageView(this);
         imageView.setImageResource(R.drawable.b);

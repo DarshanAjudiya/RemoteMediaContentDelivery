@@ -49,7 +49,7 @@ public class AnimationModel {
 
     public Animation getAnimation(Context context) {
         Animation animation = null;
-        animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
+        animation = AnimationUtils.loadAnimation(context,R.anim.slide_in_left);
         switch (type) {
             case "slide-in":
 

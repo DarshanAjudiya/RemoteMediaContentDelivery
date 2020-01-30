@@ -77,6 +77,7 @@ public class PlaylistModel {
 
     public void init(Context context) {
         this.context = context;
+        System.out.println("into playlist init");
         for (SlideModel slide : slides) {
             slide.init(context, this);
         }
@@ -91,9 +92,9 @@ public class PlaylistModel {
         return null;
     }
 
-    View getSlide() {
-        View view = slides.get(0).getView();
-        return view;
+    SlideModel getSlide() {
+        return slides.get(0);
+
     }
 
 }

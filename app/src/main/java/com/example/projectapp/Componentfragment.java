@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,26 +12,37 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 
 
 public class Componentfragment extends Fragment {
-    ImageView imageView;
-    VideoView videoView;
-    FrameLayout playlist;
-    WebView webView;
+
+    DatabaseHelper helper;
+    SlideModel slide;
+
+    public Componentfragment(SlideModel slide) {
+        this.slide = slide;
+        System.out.println("into fragment constrructor");
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v=inflater.inflate(R.layout.fragment_component,container,false);
 
-
-        return inflater.inflate(R.layout.fragment_component, container);
+        System.out.println("into oncreate view");
+        FrameLayout layout=v.findViewById(R.id.container);
+        layout.addView(slide.getView());
+        return v;
     }
 
     @Override

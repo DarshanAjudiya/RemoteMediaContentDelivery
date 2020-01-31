@@ -2,6 +2,8 @@ package com.example.projectapp;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,10 @@ public class Componentfragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Slide slidetrans=new Slide(Gravity.LEFT);
+        slidetrans.setDuration(slide.getAniduration()*1000);
 
+        setEnterTransition(slidetrans);
 
     }
 

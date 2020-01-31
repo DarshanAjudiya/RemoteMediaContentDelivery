@@ -10,13 +10,13 @@ import java.util.List;
 
 public class SlideModel {
 
-    private Integer id, bgimage, duration, next, animduration, audio;
+    private Integer id, bgimage, duration, next, animDuration, audio;
     private Boolean animate = false;
     private String name, bgcolor, animation;
     private List<ComponentModel> components;
     PlaylistModel playlist;
     FrameLayout layout;
-    Animation slideanim;
+    public Animation slideanim;
     public List<ComponentModel> getComponents() {
         return components;
     }
@@ -33,13 +33,13 @@ public class SlideModel {
         this.name = name;
     }
 
-    public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer animduration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
+    public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer animDuration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
 
         this.id = id;
         this.bgimage = bgimage;
         this.duration = duration;
         this.next = next;
-        this.animduration = animduration;
+        this.animDuration = animDuration;
         this.audio = audio;
         if (animate != null)
             this.animate = animate;
@@ -82,11 +82,11 @@ public class SlideModel {
     }
 
     public Integer getAniduration() {
-        return animduration;
+        return animDuration;
     }
 
     public void setAniduration(Integer animduration) {
-        this.animduration = animduration;
+        this.animDuration = animduration;
     }
 
     public Integer getAudio() {
@@ -134,7 +134,7 @@ public class SlideModel {
         System.out.println("slides");
 
         System.out.println(id);
-        System.out.println(animduration);
+        System.out.println(animDuration);
         System.out.println(animate);
         System.out.println(animation);
         System.out.println(audio);
@@ -165,7 +165,7 @@ public class SlideModel {
 
         if (animate)
         {
-           AnimationModel animationModel=new AnimationModel(animation,null,animduration);
+           AnimationModel animationModel=new AnimationModel(animation,null, animDuration);
             slideanim=animationModel.getAnimation(context);
             slideanim.setAnimationListener(new Animation.AnimationListener() {
                 @Override

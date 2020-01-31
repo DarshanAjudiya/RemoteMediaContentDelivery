@@ -3,6 +3,8 @@ package com.example.projectapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     public String[] EXTERNAL_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     DatabaseHelper helper;
+    PlaylistModel list1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,25 +28,30 @@ public class MainActivity extends AppCompatActivity {
         helper = new DatabaseHelper(this);
 
         checkpermision();
-
-        PlaylistModel list1 = helper.getplaylist(null);
-        list1.init(this);
-        System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
-
-        Componentfragment componentfragment=new Componentfragment(list1.getSlide());
-        FragmentManager manager=getSupportFragmentManager();
-        FragmentTransaction transaction= manager.beginTransaction();
-        transaction.replace(R.id.fragmentContainer,componentfragment);
-        transaction.commit();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
         ConstraintLayout constraintLayout = findViewById(R.id.ParentLayout);
         ConstraintSet set = new ConstraintSet();
         set.clone(constraintLayout);
-
+        list1 = helper.getplaylist(null);
+        list1.init(this);
         list1.printall();
+        System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Componentfragment componentfragment=new Componentfragment(list1.getSlide());
+                FragmentManager manager=getSupportFragmentManager();
+                FragmentTransaction transaction= manager.beginTransaction();
+                transaction.replace(R.id.fragmentContainer,componentfragment);
+
+                transaction.commit();
+
+            }
+        },2000);
+
         //.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
         //params.gravity= FrameLayout.Verti
-       // layout.addView(list1.getSlide().getView());
+        // layout.addView(list1.getSlide().getView());
         set.setDimensionRatio(constraintLayout.getChildAt(0).getId(), "16:9");
 //set.applyTo(constraintLayout);
 /*
@@ -111,4 +119,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void gotonext(View view) {
+
+
+
+    }
 }

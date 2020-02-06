@@ -7,6 +7,7 @@ import java.util.List;
 public class PlaylistModel {
     private Integer id;
     private String name;
+    public Float parent_width,parent_height;
     private Integer height, width;
     private List<SlideModel> slides;
     Context context;

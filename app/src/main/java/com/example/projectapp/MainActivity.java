@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -33,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout layout = findViewById(R.id.fragmentContainer);
         list1 = helper.getplaylist(null);
         list1.init(this);
+            DisplayMetrics displayMetrics=new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            list1.parent_width= Float.valueOf(displayMetrics.widthPixels);
+            list1.parent_height= Float.valueOf(displayMetrics.heightPixels);
+
         list1.printall();
         System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
         new Handler().postDelayed(new Runnable() {

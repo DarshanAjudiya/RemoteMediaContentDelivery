@@ -61,16 +61,13 @@ public class Componentfragment extends Fragment {
         ConstraintLayout layout=v.findViewById(R.id.ParentLayout);
      //   layout.addView(slide.getView());\
         View x=slide.getView();
-        DisplayMetrics displayMetrics=new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        Float width= Float.valueOf(displayMetrics.widthPixels);
-        Float height= Float.valueOf(displayMetrics.heightPixels);
+
 
         int w=slide.playlist.getWidth();
         int h=slide.playlist.getHeight();
 
-        float wr=width/w;
-        float hr=height/h;
+        float wr=slide.playlist.parent_width/w;
+        float hr=slide.playlist.parent_height/h;
         if (wr<1) {
             x.setScaleX(wr);
             x.setScaleY(wr);

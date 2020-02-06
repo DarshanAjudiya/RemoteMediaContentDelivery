@@ -74,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("audio", slide.getAudio());
         if (slide.getAnimate() != null && slide.getAnimate()) {
             ContentValues val = new ContentValues();
-            val.put("duration", slide.getAniduration());
+            val.put("duration", slide.getAnimDuration());
             val.put("type", slide.getAnimation());
             SQLiteDatabase db = this.getWritableDatabase();
             long row = db.insert(animations, null, val);
@@ -193,7 +193,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     Integer aid = c.getInt(c.getColumnIndex("animationid"));
                     Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + aid}, null, null, null);
                     if (c2.moveToFirst()) {
-                        slide.setAniduration(c2.getInt(c2.getColumnIndex("duration")));
+                        slide.setAnimDuration(c2.getInt(c2.getColumnIndex("duration")));
                         slide.setAnimation(c2.getString(c2.getColumnIndex("type")));
                     }
                 }

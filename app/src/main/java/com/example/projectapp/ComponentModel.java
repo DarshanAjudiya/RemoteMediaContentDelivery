@@ -288,7 +288,7 @@ public class ComponentModel {
             System.out.println("imageview initialised");
         } else {
             try {
-                imagefile.createNewFile();
+                 imagefile.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -297,8 +297,6 @@ public class ComponentModel {
 
         return imageview;
     }
-
-
     private View createVideoview() {
         VideoView videoView = null;
         File videofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), uri);

@@ -1,7 +1,6 @@
 package com.example.projectapp;
 
 import android.content.Context;
-import android.view.View;
 
 import java.util.List;
 
@@ -88,7 +87,11 @@ public class PlaylistModel {
         return false;
     }
 
-    View getNextSlide() {
+    SlideModel getNextSlide(int id) {
+        if (slides.size()>=id)
+        {
+            return slides.get(id-1);
+        }
         return null;
     }
 

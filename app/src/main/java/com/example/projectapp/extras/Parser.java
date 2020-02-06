@@ -41,8 +41,8 @@ public class Parser {
 				duration = slide.getInt("duration");
 			if (slide.has("next"))
 				next = slide.getInt("next");
-			if (slide.has("animduration"))
-				animduration = slide.getInt("animduration");
+			if (slide.has("animDuration"))
+				animduration = slide.getInt("animDuration");
 			if (slide.has("audio"))
 				audio = slide.getInt("audio");
 			if (slide.has("animate"))

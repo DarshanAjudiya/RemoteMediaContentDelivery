@@ -1,14 +1,22 @@
 package com.example.projectapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.os.Environment;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
-public class SlideModel {
+public class SlideModel implements Serializable {
 
     private Integer id, bgimage, duration, next, animDuration, audio;
     private Boolean animate = false;
@@ -17,21 +25,8 @@ public class SlideModel {
     PlaylistModel playlist;
     FrameLayout layout;
     public Animation slideanim;
-    public List<ComponentModel> getComponents() {
-        return components;
-    }
-
-    public void setComponents(List<ComponentModel> components) {
-        this.components = components;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    MediaPlayer player = null;
+    Context context;
 
     public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer animDuration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
 
@@ -46,6 +41,22 @@ public class SlideModel {
         this.name = name;
         this.bgcolor = bgcolor;
         this.animation = animation;
+    }
+
+    public List<ComponentModel> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<ComponentModel> components) {
+        this.components = components;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 
@@ -81,11 +92,11 @@ public class SlideModel {
         this.next = next;
     }
 
-    public Integer getAniduration() {
+    public Integer getAnimDuration() {
         return animDuration;
     }
 
-    public void setAniduration(Integer animduration) {
+    public void setAnimDuration(Integer animduration) {
         this.animDuration = animduration;
     }
 
@@ -150,23 +161,25 @@ public class SlideModel {
 
     public void init(Context context, PlaylistModel playlist) {
         this.playlist = playlist;
+        this.context = context;
         FrameLayout.LayoutParams layoutParams;
-        if (playlist.getHeight() == 0)
-            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        else {
 
-            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        }
+        layoutParams = new FrameLayout.LayoutParams(playlist.getWidth(), playlist.getHeight(), Gravity.CENTER);
         layout = new FrameLayout(context);
         layout.setLayoutParams(layoutParams);
         layout.setBackgroundColor(Color.parseColor(bgcolor));
-        //layout.setBackground(ContextCompat.getDrawable(context, ));
-        layout.setBackgroundResource(R.drawable.a);
 
-        if (animate)
-        {
-           AnimationModel animationModel=new AnimationModel(animation,null, animDuration);
-            slideanim=animationModel.getAnimation(context);
+
+        //layout.setBackground(ContextCompat.getDrawable(context, ));
+        //layout.setBackgroundResource(R.drawable.a);
+
+        if (animate) {
+            AnimationModel animationModel;
+            if (animDuration < duration / 2) {
+                animationModel = new AnimationModel(animation, null, animDuration);
+            } else
+                animationModel = new AnimationModel(animation, null, duration / 20);
+            slideanim = animationModel.getAnimation(context);
             slideanim.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -190,6 +203,7 @@ public class SlideModel {
     }
 
     public View getView() {
+        layout.removeAllViews();
         for (ComponentModel component : components) {
             View child = component.getView();
             if (child != null) {
@@ -198,9 +212,62 @@ public class SlideModel {
             }
 
         }
+        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "c.jpg");
+        if (imagefile.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagefile.getAbsolutePath());
+            //   layout.setBackground(new BitmapDrawable(context.getResources(),bitmap));
+        } else {
+
+        }
         if (animate)
             layout.startAnimation(slideanim);
-    return layout;
+        return layout;
+
+    }
+
+    public SlideModel getNextSlide() {
+        if (next > 0 && next != id) {
+            return playlist.getNextSlide(next);
+        }
+
+        return this;
+    }
+
+    public void setexitanimations() {
+
+    }
+
+    public void start_audio() {
+        System.out.println("slide Id in start audio"+id);
+        File audiofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), audio + ".mp3");
+        if (audiofile.exists()) {
+            player = new MediaPlayer();
+            try {
+                player.setDataSource(audiofile.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            player.prepareAsync();
+            player.setLooping(false);
+            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
+
+        } else {
+            try {
+                audiofile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void stopAudio() {
+        if (player != null && player.isPlaying())
+            player.stop();
 
     }
 }

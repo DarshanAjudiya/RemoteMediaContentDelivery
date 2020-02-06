@@ -25,13 +25,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        helper = new DatabaseHelper(this);
+        if (savedInstanceState == null)
+        {
+            helper = new DatabaseHelper(this);
 
         checkpermision();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
-        ConstraintLayout constraintLayout = findViewById(R.id.ParentLayout);
-        ConstraintSet set = new ConstraintSet();
-        set.clone(constraintLayout);
         list1 = helper.getplaylist(null);
         list1.init(this);
         list1.printall();
@@ -39,21 +38,26 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Componentfragment componentfragment=new Componentfragment(list1.getSlide());
-                FragmentManager manager=getSupportFragmentManager();
-                FragmentTransaction transaction= manager.beginTransaction();
-                transaction.replace(R.id.fragmentContainer,componentfragment);
+                Componentfragment componentfragment = Componentfragment.getInstance(list1.getSlide());
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.fragmentContainer, componentfragment);
 
                 transaction.commit();
 
             }
-        },2000);
+        }, 5000);
 
         //.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
         //params.gravity= FrameLayout.Verti
         // layout.addView(list1.getSlide().getView());
+        ConstraintLayout constraintLayout = findViewById(R.id.ParentLayout);
+        ConstraintSet set = new ConstraintSet();
+        set.clone(constraintLayout);
+        System.out.println("child id: " + constraintLayout.getChildAt(0).getId());
         set.setDimensionRatio(constraintLayout.getChildAt(0).getId(), "16:9");
-//set.applyTo(constraintLayout);
+        set.applyTo(constraintLayout);
+    }
 /*
         ImageView imageView=new ImageView(this);
         imageView.setImageResource(R.drawable.b);
@@ -119,9 +123,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void gotonext(View view) {
 
-
-
-    }
 }

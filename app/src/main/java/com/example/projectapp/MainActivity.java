@@ -33,12 +33,13 @@ public class MainActivity extends AppCompatActivity {
         checkpermision();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
         list1 = helper.getplaylist(null);
-        list1.init(this);
-            DisplayMetrics displayMetrics=new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            list1.parent_width= Float.valueOf(displayMetrics.widthPixels);
-            list1.parent_height= Float.valueOf(displayMetrics.heightPixels);
+        list1.printall();
 
+        DisplayMetrics displayMetrics=new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        list1.parent_width= Float.valueOf(displayMetrics.widthPixels);
+        list1.parent_height= Float.valueOf(displayMetrics.heightPixels);
+        list1.init(this);
         list1.printall();
         System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
         new Handler().postDelayed(new Runnable() {
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }, 5000);
-
         //.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
         //params.gravity= FrameLayout.Verti
         // layout.addView(list1.getSlide().getView());

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.webkit.WebView;
@@ -41,7 +43,25 @@ public class ComponentModel {
     private Context context;
     private Animation exitanimation;
     private Animation enteranimation;
+    FrameLayout playlistlayout;
+    PlaylistModel playlistModel=null;
+    SlideModel slide;
 
+    Handler myHandler;
+    Runnable myRunnable=new Runnable() {
+        @Override
+        public void run() {
+            slide.stopAudio();
+            slide.setexitanimations();
+            slide=slide.getNextSlide();
+            if (slide!=null) {
+                playlistlayout.removeAllViews();
+                playlistlayout.addView(slide.getView());
+                slide.start_audio();
+                myHandler.postDelayed(myRunnable, slide.getDuration());
+            }
+        }
+    };
 
     public Integer getId() {
         return id;
@@ -240,6 +260,7 @@ public class ComponentModel {
             view = createVideoview();
         } else if (type.equals("playlist")) {
 
+            view = createPlaylist();
         } else {
             view = createWebview();
         }
@@ -269,6 +290,19 @@ public class ComponentModel {
         }
 
 
+    }
+
+    private View createPlaylist() {
+        DatabaseHelper helper=new DatabaseHelper(context);
+        playlistlayout = new FrameLayout(context);
+        playlistModel=helper.getplaylist(id);
+        if (playlistModel!=null)
+        {
+            playlistModel.parent_width=width.floatValue();
+            playlistModel.parent_height=height.floatValue();
+            playlistModel.init(context);
+        }
+        return null;
     }
 
     private View createImageview() {
@@ -359,6 +393,16 @@ public class ComponentModel {
             if (is_videoview)
                 ((VideoView) view).start();
 
+            if (type=="playlist" && playlistModel!=null)
+            {
+                slide = playlistModel.getSlide();
+                playlistlayout.addView(slide.getView());
+                slide.start_audio();
+                myHandler=new Handler();
+                myHandler.postDelayed(myRunnable,slide.getDuration());
+
+
+            }
         }
         return view;
     }

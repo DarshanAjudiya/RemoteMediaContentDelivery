@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -27,6 +28,7 @@ public class SlideModel implements Serializable {
     public Animation slideanim;
     MediaPlayer player = null;
     Context context;
+
 
     public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer animDuration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
 
@@ -200,6 +202,21 @@ public class SlideModel implements Serializable {
         for (ComponentModel componentModel : components) {
             componentModel.init(context, this);
         }
+        int w=playlist.getWidth();
+        int h=playlist.getHeight();
+
+        float wr=playlist.parent_width/w;
+        float hr=playlist.parent_height/h;
+        if (wr<1) {
+            layout.setScaleX(wr);
+            layout.setScaleY(wr);
+        }
+
+        else
+        {
+            layout.setScaleX(hr);
+            layout.setScaleY(hr);
+        }
     }
 
     public View getView() {
@@ -221,16 +238,20 @@ public class SlideModel implements Serializable {
         }
         if (animate)
             layout.startAnimation(slideanim);
+
+
         return layout;
 
     }
 
     public SlideModel getNextSlide() {
-        if (next > 0 && next != id) {
-            return playlist.getNextSlide(next);
+        if (next!=null) {
+            if (next > 0 && next != id) {
+                return playlist.getNextSlide(next);
+            }
         }
 
-        return this;
+        return null;
     }
 
     public void setexitanimations() {
@@ -266,8 +287,13 @@ public class SlideModel implements Serializable {
     }
 
     public void stopAudio() {
+
         if (player != null && player.isPlaying())
             player.stop();
+
+    }
+
+    public void stopInnerPlaylist() {
 
     }
 }

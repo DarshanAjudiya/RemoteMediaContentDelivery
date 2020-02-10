@@ -63,20 +63,7 @@ public class Componentfragment extends Fragment {
         View x=slide.getView();
 
 
-        int w=slide.playlist.getWidth();
-        int h=slide.playlist.getHeight();
 
-        float wr=slide.playlist.parent_width/w;
-        float hr=slide.playlist.parent_height/h;
-        if (wr<1) {
-            x.setScaleX(wr);
-            x.setScaleY(wr);
-        }
-        else
-        {
-            x.setScaleX(hr);
-            x.setScaleY(hr);
-        }
         return x;
     }
 
@@ -90,13 +77,20 @@ public class Componentfragment extends Fragment {
 
                 slide.setexitanimations();
                 SlideModel next=slide.getNextSlide();
-                Componentfragment nextfragment=Componentfragment.getInstance(next);
-                Toast.makeText(getContext(), "after duration", Toast.LENGTH_SHORT).show();
+                if (next!=null) {
+                    Componentfragment nextfragment = Componentfragment.getInstance(next);
+                    Toast.makeText(getContext(), "after duration", Toast.LENGTH_SHORT).show();
 
-                FragmentManager manager= getFragmentManager();
-                FragmentTransaction transaction=manager.beginTransaction();
-                transaction.replace(R.id.fragmentContainer,nextfragment);
-                transaction.commit();
+                    FragmentManager manager = getFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.fragmentContainer, nextfragment);
+                    transaction.commit();
+                }
+                else
+                {
+                    onStop();
+                    getActivity().finish();
+                }
 
             }
         },slide.getDuration()*1000);
@@ -106,6 +100,7 @@ public class Componentfragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        slide.stopInnerPlaylist();
         slide.stopAudio();
     }
 

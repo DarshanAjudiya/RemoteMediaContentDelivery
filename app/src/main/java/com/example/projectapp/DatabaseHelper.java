@@ -173,12 +173,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<SlideModel> allslides = new ArrayList<SlideModel>();
         Cursor c;
 
-        c = db.query(slides, null, "pid=?", new String[]{"" + pid}, null, null, "sid");
+        c = db.query(slides, null, "pid=?", new String[]{"" + pid}, null, null, "uid");
         SlideModel slide = null;
         if (c.moveToFirst()) {
             do {
 
-
+                Integer uid=c.getInt(c.getColumnIndex("uid"));
                 Integer sid = c.getInt(c.getColumnIndex("sid"));
                 Boolean anim = (c.getInt(c.getColumnIndex("animate")) == 1);
                 String name = c.getString(c.getColumnIndex("name"));
@@ -199,7 +199,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
 
                 List<ComponentModel> components = new ArrayList<ComponentModel>();
-                Cursor comp = db.query(component, null, "sid=?", new String[]{"" + sid}, null, null, "cid");
+                Cursor comp = db.query(component, null, "sid=?", new String[]{"" + uid}, null, null, "cid");
                 if (comp.moveToFirst()) {
                     do {
                         Integer id = comp.getInt(comp.getColumnIndex("cid"));
@@ -216,7 +216,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Integer angle = comp.getInt(comp.getColumnIndex("angle"));
                         Double opacity = comp.getDouble(comp.getColumnIndex("opacity"));
 
-                        System.out.println("<--------------------------------------------\n\n\n " + opacity + "---------------------" + comp.getDouble(comp.getColumnIndex("opacity")) + "\n--------------------->\n\n\n\n");
+                   //     System.out.println("<--------------------------------------------\n\n\n " + opacity + "---------------------" + comp.getDouble(comp.getColumnIndex("opacity")) + "\n--------------------->\n\n\n\n");
                         String onclick = comp.getString(comp.getColumnIndex("onclick"));
                         Boolean animate = (comp.getInt(comp.getColumnIndex("animate")) == 1);
                         AnimationModel enter = null, exit = null;

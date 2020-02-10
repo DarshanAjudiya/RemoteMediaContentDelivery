@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class getData extends AsyncTask<Void, Void, Void> {
     DatabaseHelper helper;
@@ -26,7 +27,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         helper = new DatabaseHelper(context);
         try {
-            URL url = new URL("https://api.myjson.com/bins/1as3z2");
+            URL url = new URL("https://api.myjson.com/bins/pwlfg");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connection.getInputStream();
@@ -39,18 +40,18 @@ public class getData extends AsyncTask<Void, Void, Void> {
             }
             System.out.println(data);
 
-            PlaylistModel myplaylist = null;
+            PlaylistModel[] myplaylist =null;
             try {
                 myplaylist = Parser.parsetoobject(data);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (myplaylist != null) {
-                myplaylist.printall();
-                int count = helper.insert_playlist(myplaylist);
+            helper.onUpgrade(helper.getWritableDatabase(),1,1);
+            for (PlaylistModel list:myplaylist)
+            {
+                list.printall();
+                int count = helper.insert_playlist(list);
                 System.out.println("playlist added :" + count);
-            } else {
-                System.out.println("playlist is null");
             }
         } catch (IOException e) {
             e.printStackTrace();

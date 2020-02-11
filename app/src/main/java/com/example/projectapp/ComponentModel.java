@@ -43,9 +43,9 @@ public class ComponentModel {
     private Context context;
     private Animation exitanimation;
     private Animation enteranimation;
-    FrameLayout playlistlayout;
     PlaylistModel playlistModel=null;
     SlideModel slide;
+    FrameLayout playlistlayout;
 
     Handler myHandler;
     Runnable myRunnable=new Runnable() {
@@ -58,7 +58,7 @@ public class ComponentModel {
                 playlistlayout.removeAllViews();
                 playlistlayout.addView(slide.getView());
                 slide.start_audio();
-                myHandler.postDelayed(myRunnable, slide.getDuration());
+                myHandler.postDelayed(myRunnable, slide.getDuration()*1000);
             }
         }
     };
@@ -260,10 +260,11 @@ public class ComponentModel {
             view = createVideoview();
         } else if (type.equals("playlist")) {
 
-            view = createPlaylist();
+            createPlaylist();
         } else {
             view = createWebview();
         }
+        FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams(width.intValue(), height.intValue());
 
         if (view != null) {
             if (is_animate) {
@@ -281,19 +282,21 @@ public class ComponentModel {
                 view.setZ(z_index);
 
 
-            FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams(width.intValue(), height.intValue());
             view.setLayoutParams(comonentlayoutparam);
             view.setX(top);
             view.setY(left);
-        } else {
-
+        } else if (playlistlayout!=null){
+            playlistlayout.setLayoutParams(comonentlayoutparam);
+            playlistlayout.setX(top);
+            playlistlayout.setY(left);
         }
 
 
     }
 
-    private View createPlaylist() {
+    private void createPlaylist() {
         DatabaseHelper helper=new DatabaseHelper(context);
+
         playlistlayout = new FrameLayout(context);
         playlistModel=helper.getplaylist(id);
         if (playlistModel!=null)
@@ -302,7 +305,7 @@ public class ComponentModel {
             playlistModel.parent_height=height.floatValue();
             playlistModel.init(context);
         }
-        return null;
+
     }
 
     private View createImageview() {
@@ -358,11 +361,9 @@ public class ComponentModel {
         File htmlfile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
         if (htmlfile.exists()) {
             try {
-
                 FileReader reader = new FileReader(htmlfile);
                 BufferedReader bufferedReader = new BufferedReader(reader);
                 String temp;
-
                 while ((temp = bufferedReader.readLine()) != null) {
                     data += temp;
                 }
@@ -386,23 +387,26 @@ public class ComponentModel {
     public View getView() {
 
         System.out.println("component returned to slide:");
-        if (view != null) {
+        if (type.equals("playlist") && playlistlayout!=null)
+        {
+            System.out.println("Returning playlist model");
+            slide = playlistModel.getSlide();
+            playlistlayout.addView(slide.getView());
+            slide.start_audio();
+            myHandler=new Handler();
+            myHandler.postDelayed(myRunnable,slide.getDuration()*1000);
+            return playlistlayout;
+
+        }
+        else if (view != null) {
             if (enteranimation != null)
 
                 view.startAnimation(enteranimation);
             if (is_videoview)
                 ((VideoView) view).start();
 
-            if (type=="playlist" && playlistModel!=null)
-            {
-                slide = playlistModel.getSlide();
-                playlistlayout.addView(slide.getView());
-                slide.start_audio();
-                myHandler=new Handler();
-                myHandler.postDelayed(myRunnable,slide.getDuration());
 
 
-            }
         }
         return view;
     }

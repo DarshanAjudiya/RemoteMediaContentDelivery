@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Environment;
 import android.os.Handler;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 
+import com.example.projectapp.extras.ResourceMissing;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -19,30 +22,32 @@ import java.util.List;
 
 public class SlideModel implements Serializable {
 
-    private Integer id, bgimage, duration, next, animDuration, audio;
+    private Integer id, bgimage, duration, next, audio;
     private Boolean animate = false;
-    private String name, bgcolor, animation;
+    private String name, bgcolor;
     private List<ComponentModel> components;
+    private AnimationModel enter_animation;
+    private AnimationModel exit_animation;
     PlaylistModel playlist;
     FrameLayout layout;
-    public Animation slideanim;
+    private Animation exitanimation;
+    private Animation enteranimation;
     MediaPlayer player = null;
     Context context;
 
-
-    public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer animDuration, Integer audio, Boolean animate, String name, String bgcolor, String animation) {
+    public SlideModel(Integer id, Integer bgimage, Integer duration, Integer next, Integer audio, Boolean animate, String name, String bgcolor,AnimationModel enter_animation,AnimationModel exit_animation) {
 
         this.id = id;
         this.bgimage = bgimage;
         this.duration = duration;
         this.next = next;
-        this.animDuration = animDuration;
         this.audio = audio;
         if (animate != null)
             this.animate = animate;
         this.name = name;
         this.bgcolor = bgcolor;
-        this.animation = animation;
+        this.enter_animation=enter_animation;
+        this.exit_animation=exit_animation;
     }
 
     public List<ComponentModel> getComponents() {
@@ -94,13 +99,6 @@ public class SlideModel implements Serializable {
         this.next = next;
     }
 
-    public Integer getAnimDuration() {
-        return animDuration;
-    }
-
-    public void setAnimDuration(Integer animduration) {
-        this.animDuration = animduration;
-    }
 
     public Integer getAudio() {
         return audio;
@@ -127,12 +125,21 @@ public class SlideModel implements Serializable {
         this.bgcolor = bgcolor;
     }
 
-    public String getAnimation() {
-        return animation;
+
+    public AnimationModel getEnter_animation() {
+        return enter_animation;
     }
 
-    public void setAnimation(String animation) {
-        this.animation = animation;
+    public void setEnter_animation(AnimationModel enter_animation) {
+        this.enter_animation = enter_animation;
+    }
+
+    public AnimationModel getExit_animation() {
+        return exit_animation;
+    }
+
+    public void setExit_animation(AnimationModel exit_animation) {
+        this.exit_animation = exit_animation;
     }
 
     /*  public String getBgImageUri() {
@@ -147,16 +154,20 @@ public class SlideModel implements Serializable {
         System.out.println("slides");
 
         System.out.println(id);
-        System.out.println(animDuration);
         System.out.println(animate);
-        System.out.println(animation);
         System.out.println(audio);
         System.out.println(bgcolor);
         System.out.println(bgimage);
         //     System.out.println(bgImageUri);
         System.out.println(duration);
         System.out.println(next);
-
+        if(animate)
+        {
+            if (enter_animation!=null)
+                enter_animation.printall();
+            if (exit_animation!=null)
+                exit_animation.printall();
+        }
         for (ComponentModel c : components)
             c.printall();
     }
@@ -176,28 +187,18 @@ public class SlideModel implements Serializable {
         //layout.setBackgroundResource(R.drawable.a);
 
         if (animate) {
-            AnimationModel animationModel;
-            if (animDuration < duration / 2) {
-                animationModel = new AnimationModel(animation, null, animDuration);
-            } else
-                animationModel = new AnimationModel(animation, null, duration / 20);
-            slideanim = animationModel.getAnimation(context);
-            slideanim.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    System.out.println("...............................\n slide animation started\n............................");
-                }
+          if (enter_animation!=null) {
+              if (enter_animation.getDuration() > duration / 2)
+                  enter_animation.setDuration(duration / 2);
+              enteranimation=enter_animation.getAnimation(context);
+          }
+          if (exit_animation!=null)
+          {
+              if (exit_animation.getDuration()>duration/2)
+                  exit_animation.setDuration(duration/2);
+              exitanimation=exit_animation.getAnimation(context);
+          }
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    System.out.println("...............................\n slide animation ended\n............................");
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
         }
         for (ComponentModel componentModel : components) {
             componentModel.init(context, this);
@@ -207,7 +208,7 @@ public class SlideModel implements Serializable {
 
         float wr=playlist.parent_width/w;
         float hr=playlist.parent_height/h;
-        if (wr<1) {
+        if (wr<hr) {
             layout.setScaleX(wr);
             layout.setScaleY(wr);
         }
@@ -229,17 +230,15 @@ public class SlideModel implements Serializable {
             }
 
         }
-        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "c.jpg");
+        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), bgimage+".jpg");
         if (imagefile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagefile.getAbsolutePath());
-            //   layout.setBackground(new BitmapDrawable(context.getResources(),bitmap));
+               layout.setBackground(new BitmapDrawable(context.getResources(),bitmap));
         } else {
-
+            ResourceMissing.downloadResource(bgimage);
         }
-        if (animate)
-            layout.startAnimation(slideanim);
-
-
+        if (animate && enter_animation!=null)
+            layout.startAnimation(enteranimation);
         return layout;
 
     }
@@ -256,6 +255,8 @@ public class SlideModel implements Serializable {
 
     public void setexitanimations() {
 
+        if (exit_animation!=null)
+            layout.startAnimation(exitanimation );
     }
 
     public void start_audio() {
@@ -278,11 +279,7 @@ public class SlideModel implements Serializable {
             });
 
         } else {
-            try {
-                audiofile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ResourceMissing.downloadResource(audio);
         }
     }
 

@@ -32,11 +32,11 @@ public class Parser {
 				Integer bgimage = null;
 				Integer duration = null;
 				Integer next = null;
-				Integer animduration = null;
 				Boolean animate = null;
 				String sname = null;
 				String bgcolor = null;
-				String animation = null;
+				AnimationModel enter_animation=null;
+				AnimationModel exit_animation=null;
 
 				Integer sid = slide.getInt("id");
 				if (slide.has("bgimage"))
@@ -45,8 +45,6 @@ public class Parser {
 					duration = slide.getInt("duration");
 				if (slide.has("next"))
 					next = slide.getInt("next");
-				if (slide.has("animDuration"))
-					animduration = slide.getInt("animDuration");
 				if (slide.has("audio"))
 					audio = slide.getInt("audio");
 				if (slide.has("animate"))
@@ -55,8 +53,32 @@ public class Parser {
 					sname = slide.getString("name");
 				if (slide.has("bgcolor"))
 					bgcolor = slide.getString("bgcolor");
-				if (slide.has("animation"))
-					animation = slide.getString("animation");
+				if (slide.has("enter_animation"))
+				{
+					JSONObject enter = slide.getJSONObject("enter_animation");
+					String atype = null;
+					Integer delay = null, aduration = null;
+					if (enter.has("type"))
+						atype = enter.getString("type");
+					if (enter.has("delay"))
+						delay = enter.getInt("delay");
+					if (enter.has("duration"))
+						aduration = enter.getInt("duration");
+					enter_animation = new AnimationModel(atype, delay, aduration);
+				}
+				if (slide.has("exit_animation"))
+				{
+					JSONObject enter = slide.getJSONObject("exit_animation");
+					String atype = null;
+					Integer delay = null, aduration = null;
+					if (enter.has("type"))
+						atype = enter.getString("type");
+					if (enter.has("delay"))
+						delay = enter.getInt("delay");
+					if (enter.has("duration"))
+						aduration = enter.getInt("duration");
+					exit_animation = new AnimationModel(atype, delay, aduration);
+				}
 				List<ComponentModel> componentModels = new ArrayList<ComponentModel>();
 				if (slide.has("components")) {
 					JSONArray components = slide.getJSONArray("components");
@@ -137,7 +159,7 @@ public class Parser {
 						componentModels.add(new ComponentModel(cid, type, left, top, cwidth, cheight, uri, shadow, scaleX, scaleY, z_index, angle, opacity, onClick, is_animate, enteranimation, exitanimation));
 					}
 				}
-				SlideModel model = new SlideModel(sid, bgimage, duration, next, animduration, audio, animate, name, bgcolor, animation);
+				SlideModel model = new SlideModel(sid, bgimage, duration, next, audio, animate, name, bgcolor,enter_animation,exit_animation);
 				model.setComponents(componentModels);
 				slideModels.add(model);
 			}

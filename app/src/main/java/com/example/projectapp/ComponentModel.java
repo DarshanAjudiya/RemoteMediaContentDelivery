@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
+import com.example.projectapp.extras.ResourceMissing;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -48,16 +50,23 @@ public class ComponentModel {
     FrameLayout playlistlayout;
 
     Handler myHandler;
+    Runnable exitanim=new Runnable() {
+        @Override
+        public void run() {
+            slide.setexitanimations();
+        }
+    };
     Runnable myRunnable=new Runnable() {
         @Override
         public void run() {
             slide.stopAudio();
-            slide.setexitanimations();
             slide=slide.getNextSlide();
             if (slide!=null) {
                 playlistlayout.removeAllViews();
                 playlistlayout.addView(slide.getView());
                 slide.start_audio();
+                if (slide.getExit_animation()!=null)
+                    myHandler.postDelayed(exitanim,(slide.getDuration()-slide.getExit_animation().getDuration())*1000);
                 myHandler.postDelayed(myRunnable, slide.getDuration()*1000);
             }
         }
@@ -324,11 +333,7 @@ public class ComponentModel {
                 imageview.setRotation(angle);
             System.out.println("imageview initialised");
         } else {
-            try {
-                 imagefile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
 
         }
 
@@ -345,21 +350,18 @@ public class ComponentModel {
             is_videoview = true;
 
         } else {
-            try {
-                videofile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ResourceMissing.downloadResource(id);
         }
         return videoView;
     }
 
 
     private View createWebview() {
-        WebView webview = new WebView(context);
+        WebView webview=null;
         String data = "";
         File htmlfile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
         if (htmlfile.exists()) {
+            webview = new WebView(context);
             try {
                 FileReader reader = new FileReader(htmlfile);
                 BufferedReader bufferedReader = new BufferedReader(reader);
@@ -374,12 +376,7 @@ public class ComponentModel {
             webview.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
             System.out.println("Webview initialized:" + webview);
         } else {
-            try {
-                htmlfile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            ResourceMissing.downloadResource(id);
         }
         return webview;
     }
@@ -387,14 +384,17 @@ public class ComponentModel {
     public View getView() {
 
         System.out.println("component returned to slide:");
-        if (type.equals("playlist") && playlistlayout!=null)
+        if (type.equals("playlist") &&playlistModel!=null)
         {
             System.out.println("Returning playlist model");
             slide = playlistModel.getSlide();
             playlistlayout.addView(slide.getView());
             slide.start_audio();
             myHandler=new Handler();
+            if (slide.getExit_animation()!=null)
+                myHandler.postDelayed(exitanim,(slide.getDuration()-slide.getExit_animation().getDuration())*1000);
             myHandler.postDelayed(myRunnable,slide.getDuration()*1000);
+
             return playlistlayout;
 
         }
@@ -404,9 +404,10 @@ public class ComponentModel {
                 view.startAnimation(enteranimation);
             if (is_videoview)
                 ((VideoView) view).start();
-
-
-
+        }
+        else
+        {
+            ResourceMissing.downloadResource(id);
         }
         return view;
     }

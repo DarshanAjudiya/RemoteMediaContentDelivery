@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //playlist table
         db.execSQL("create table " + playlist + "(pid integer primary key ,name text,height  real, width real)");
         //slides table
-        db.execSQL("create table " + slides + "(uid integer primary key autoincrement,sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate numeric,animationid integer,audio integer)");
+        db.execSQL("create table " + slides + "(uid integer primary key autoincrement,sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate numeric,enteranim integer,exitanim integer,audio integer)");
         //component table
         db.execSQL("create table " + component + "(cid integer,sid integer,type text,left_pos integer, top_pos integer, width real,height real,uri text,shadow text,scalex integer,scaley integer,z_index integer,opacity real,angle integer,onclick text,animate integer,enteranim integer,exitanim integer)");
         //animation table
@@ -72,20 +72,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("next", slide.getNext());
         values.put("animate", slide.getAnimate());
         values.put("audio", slide.getAudio());
-        if (slide.getAnimate() != null && slide.getAnimate()) {
-            ContentValues val = new ContentValues();
-            val.put("duration", slide.getAnimDuration());
-            val.put("type", slide.getAnimation());
-            SQLiteDatabase db = this.getWritableDatabase();
-            long row = db.insert(animations, null, val);
 
-            Cursor c = db.rawQuery("select animid from " + animations + " where rowid=" + row + "", null);
-            if (c.moveToFirst()) {
-                int aid = c.getInt(c.getColumnIndex("animid"));
-                values.put("animationid", aid);
-            }
-            db.close();
+        if (slide.getAnimate() != null && slide.getAnimate()) {
+            int enter = insert_anim(slide.getEnter_animation());
+            int exit = insert_anim(slide.getExit_animation());
+            if (enter != -1)
+                values.put("enteranim", enter);
+            if (exit != -1)
+                values.put("exitanim", exit);
         }
+
         SQLiteDatabase db = this.getWritableDatabase();
         long x = db.insert(slides, null, values);
         Cursor c = db.rawQuery("select uid from " + slides + " where rowid=" + x, null);
@@ -187,16 +183,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Integer duration = c.getInt(c.getColumnIndex("duration"));
                 Integer next = c.getInt(c.getColumnIndex("next"));
                 Integer audio = c.getInt(c.getColumnIndex("audio"));
-                slide = new SlideModel(sid, bgimage, duration, next, null, audio, anim, name, bgcolor, null);
 
+                AnimationModel senter = null, sexit = null;
                 if (anim) {
-                    Integer aid = c.getInt(c.getColumnIndex("animationid"));
-                    Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + aid}, null, null, null);
+
+                    Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + c.getInt(c.getColumnIndex("enteranim"))}, null, null, null);
                     if (c2.moveToFirst()) {
-                        slide.setAnimDuration(c2.getInt(c2.getColumnIndex("duration")));
-                        slide.setAnimation(c2.getString(c2.getColumnIndex("type")));
+                        senter = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
+                    }
+
+                    c2 = db.query(animations, null, "animid=?", new String[]{"" + c.getInt(c.getColumnIndex("exitanim"))}, null, null, null);
+                    if (c2.moveToFirst()) {
+                        sexit = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
                     }
                 }
+                slide = new SlideModel(sid, bgimage, duration, next, audio, anim, name, bgcolor, senter,sexit);
 
                 List<ComponentModel> components = new ArrayList<ComponentModel>();
                 Cursor comp = db.query(component, null, "sid=?", new String[]{"" + uid}, null, null, "cid");

@@ -94,6 +94,14 @@ public class Componentfragment extends Fragment {
 
             }
         },slide.getDuration()*1000);
+        if (slide.getExit_animation()!=null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    slide.setexitanimations();
+                }
+            }, (slide.getDuration() - slide.getExit_animation().getDuration()) * 1000);
+        }
 
     }
 

@@ -2,24 +2,16 @@ package com.example.projectapp;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.transition.Slide;
-import android.transition.Transition;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -112,8 +104,5 @@ public class Componentfragment extends Fragment {
         slide.stopAudio();
     }
 
-    public Transition setTransition()
-    {
-        return null;
-    }
+
 }

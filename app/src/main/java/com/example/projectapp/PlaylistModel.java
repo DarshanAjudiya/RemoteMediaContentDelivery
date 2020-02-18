@@ -83,10 +83,6 @@ public class PlaylistModel {
         }
     }
 
-    Boolean hasnext() {
-
-        return false;
-    }
 
     SlideModel getNextSlide(int id) {
         if (slides.size()>=id)

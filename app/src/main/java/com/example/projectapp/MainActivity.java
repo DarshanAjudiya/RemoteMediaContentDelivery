@@ -54,15 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }, 5000);
-        //.LayoutParams params= (FrameLayout.LayoutParams) layout.getLayoutParams();
-        //params.gravity= FrameLayout.Verti
-        // layout.addView(list1.getSlide().getView());
-        ConstraintLayout constraintLayout = findViewById(R.id.ParentLayout);
-        ConstraintSet set = new ConstraintSet();
-        set.clone(constraintLayout);
-        System.out.println("child id: " + constraintLayout.getChildAt(0).getId());
-        set.setDimensionRatio(constraintLayout.getChildAt(0).getId(), "16:9");
-        set.applyTo(constraintLayout);
+
     }
 /*
         ImageView imageView=new ImageView(this);

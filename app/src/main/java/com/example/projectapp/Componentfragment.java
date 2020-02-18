@@ -100,8 +100,8 @@ public class Componentfragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        slide.stopInnerPlaylist();
-        slide.stopAudio();
+
+        slide.stop();
     }
 
 

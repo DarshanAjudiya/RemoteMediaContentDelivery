@@ -255,6 +255,9 @@ public class SlideModel implements Serializable {
 
     public void setexitanimations() {
 
+        for (ComponentModel component : components) {
+          component.startExitAnimation();
+        }
         if (exit_animation!=null)
             layout.startAnimation(exitanimation );
     }
@@ -283,14 +286,15 @@ public class SlideModel implements Serializable {
         }
     }
 
-    public void stopAudio() {
+    public void stop() {
 
+        for (ComponentModel component : components) {
+            component.endinnerplaylist();
+        }
         if (player != null && player.isPlaying())
             player.stop();
 
     }
 
-    public void stopInnerPlaylist() {
 
-    }
 }

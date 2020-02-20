@@ -27,7 +27,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         helper = new DatabaseHelper(context);
         try {
-            URL url = new URL("https://api.myjson.com/bins/1187ys");
+            URL url = new URL("https://jsonblob.com/api/212f0a09-5319-11ea-8e7b-552f2d86fbba");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connection.getInputStream();

@@ -1,19 +1,18 @@
 package com.example.projectapp;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
-import android.view.Gravity;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.Animation;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+import com.caverock.androidsvg.SVGImageView;
 import com.example.projectapp.extras.ResourceMissing;
 
 import java.io.BufferedReader;
@@ -44,31 +43,31 @@ public class ComponentModel {
     private Boolean is_videoview = false;
     private View view = null;
     private Context context;
-    private Animation exitanimation=null;
-    private Animation enteranimation=null;
-    PlaylistModel playlistModel=null;
-    SlideModel slide=null;
+    private Animation exitanimation = null;
+    private Animation enteranimation = null;
+    PlaylistModel playlistModel = null;
+    SlideModel slide = null;
     FrameLayout playlistlayout;
 
     Handler myHandler;
-    Runnable exitanimrunnable=new Runnable() {
+    Runnable exitanimrunnable = new Runnable() {
         @Override
         public void run() {
             slide.setexitanimations();
         }
     };
-    Runnable nextsliderunnable=new Runnable() {
+    Runnable nextsliderunnable = new Runnable() {
         @Override
         public void run() {
             slide.stop();
-            slide=slide.getNextSlide();
-            if (slide!=null) {
+            slide = slide.getNextSlide();
+            if (slide != null) {
                 playlistlayout.removeAllViews();
                 playlistlayout.addView(slide.getView());
                 slide.start_audio();
-                if (slide.getExit_animation()!=null)
-                    myHandler.postDelayed(exitanimrunnable,(slide.getDuration()-slide.getExit_animation().getDuration())*1000);
-                myHandler.postDelayed(nextsliderunnable, slide.getDuration()*1000);
+                if (slide.getExit_animation() != null)
+                    myHandler.postDelayed(exitanimrunnable, (slide.getDuration() - slide.getExit_animation().getDuration()) * 1000);
+                myHandler.postDelayed(nextsliderunnable, slide.getDuration() * 1000);
             }
         }
     };
@@ -295,7 +294,7 @@ public class ComponentModel {
             view.setLayoutParams(comonentlayoutparam);
             view.setX(top);
             view.setY(left);
-        } else if (playlistlayout!=null){
+        } else if (playlistlayout != null) {
             playlistlayout.setLayoutParams(comonentlayoutparam);
             playlistlayout.setX(top);
             playlistlayout.setY(left);
@@ -305,33 +304,36 @@ public class ComponentModel {
     }
 
     private void createPlaylist() {
-        DatabaseHelper helper=new DatabaseHelper(context);
+        DatabaseHelper helper = new DatabaseHelper(context);
 
         playlistlayout = new FrameLayout(context);
-        playlistModel=helper.getplaylist(id);
-        if (playlistModel!=null)
-        {
-            playlistModel.parent_width=width.floatValue();
-            playlistModel.parent_height=height.floatValue();
+        playlistModel = helper.getplaylist(id);
+        if (playlistModel != null) {
+            playlistModel.parent_width = width.floatValue();
+            playlistModel.parent_height = height.floatValue();
             playlistModel.init(context);
         }
 
     }
 
+
     private View createImageview() {
-        ImageView imageview = null;
-        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "c.jpg");
+        SVGImageView imageview = null;
+        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), uri);
         if (imagefile.exists()) {
-            Bitmap bitmapinstnce = BitmapFactory.decodeFile(imagefile.getAbsolutePath());
-            imageview = new ImageView(context);
-            //imageview.setImageResource(context.getApplicationContext().getResources().getIdentifier("" + id, "drawable", context.getPackageName()));
-            imageview.setImageBitmap(bitmapinstnce);
+            imageview = new SVGImageView(context);
+            if (MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(imagefile).toString()).equals("svg")) {
+                imageview.setImageURI(Uri.fromFile(imagefile));
+            } else {
+                Glide.with(context).load(imagefile).into(imageview);
+            }
             if (scaleX != null)
                 imageview.setX(scaleX);
             if (scaleY != null)
                 imageview.setY(scaleY);
             if (angle != null)
                 imageview.setRotation(angle);
+
             System.out.println("imageview initialised");
         } else {
 
@@ -340,6 +342,7 @@ public class ComponentModel {
 
         return imageview;
     }
+
     private View createVideoview() {
         VideoView videoView = null;
         File videofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), uri);
@@ -358,7 +361,7 @@ public class ComponentModel {
 
 
     private View createWebview() {
-        WebView webview=null;
+        WebView webview = null;
         String data = "";
         File htmlfile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
         if (htmlfile.exists()) {
@@ -385,49 +388,43 @@ public class ComponentModel {
     public View getView() {
 
         System.out.println("component returned to slide:");
-        if (type.equals("playlist") &&playlistModel!=null)
-        {
+        if (type.equals("playlist") && playlistModel != null) {
             System.out.println("Returning playlist model");
             slide = playlistModel.getSlide();
             playlistlayout.addView(slide.getView());
             slide.start_audio();
-            myHandler=new Handler();
+            myHandler = new Handler();
             if (enteranimation != null)
                 playlistlayout.startAnimation(enteranimation);
-            if (slide.getExit_animation()!=null)
-                myHandler.postDelayed(exitanimrunnable,(slide.getDuration()-slide.getExit_animation().getDuration())*1000);
-            myHandler.postDelayed(nextsliderunnable,slide.getDuration()*1000);
+            if (slide.getExit_animation() != null)
+                myHandler.postDelayed(exitanimrunnable, (slide.getDuration() - slide.getExit_animation().getDuration()) * 1000);
+            myHandler.postDelayed(nextsliderunnable, slide.getDuration() * 1000);
             return playlistlayout;
 
-        }
-        else if (view != null) {
+        } else if (view != null) {
             if (enteranimation != null)
                 view.startAnimation(enteranimation);
             if (is_videoview)
                 ((VideoView) view).start();
-        }
-        else
-        {
+        } else {
             ResourceMissing.downloadResource(id);
         }
         return view;
     }
-    public void startExitAnimation()
-    {
 
-        if (exitanimation!=null) {
+    public void startExitAnimation() {
+
+        if (exitanimation != null) {
             if (type.equals("playlist")) {
                 playlistlayout.startAnimation(exitanimation);
-            }
-            else
-            {
+            } else {
                 view.startAnimation(exitanimation);
             }
         }
     }
-    public void endinnerplaylist()
-    {
-        if (type.equals("playlist") && slide!=null) {
+
+    public void endinnerplaylist() {
+        if (type.equals("playlist") && slide != null) {
             slide.stop();
             myHandler.removeCallbacks(exitanimrunnable);
             myHandler.removeCallbacks(nextsliderunnable);

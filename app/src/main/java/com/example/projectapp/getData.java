@@ -38,7 +38,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
                 data = data + line;
                 line = bufferedReader.readLine();
             }
-            System.out.println(data);
+            //System.out.println(data);
 
             PlaylistModel[] myplaylist =null;
             try {
@@ -51,7 +51,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
             {
                 list.printall();
                 int count = helper.insert_playlist(list);
-                System.out.println("playlist added :" + count);
+               // System.out.println("playlist added :" + count);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -182,9 +182,25 @@ public class SlideModel implements Serializable {
         layout.setLayoutParams(layoutParams);
         layout.setBackgroundColor(Color.parseColor(bgcolor));
 
+        /*File bg_image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), bgimage+".jpg");
+        if (bg_image.exists())
+        {
+            Bitmap bitmap=BitmapFactory.decodeFile(bg_image.getAbsolutePath());
+            BitmapDrawable bg_drawable=new BitmapDrawable(context,bitmap);
+            layout.setBackground(bg_drawable);
+        }
+        else
+        {
+           *//* try {
+                bg_image.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*//*
+            ResourceMissing.downloadResource(bgimage);
+        }*/
 
         //layout.setBackground(ContextCompat.getDrawable(context, ));
-        //layout.setBackgroundResource(R.drawable.a);
+        layout.setBackgroundResource(R.drawable.a);
 
         if (animate) {
           if (enter_animation!=null) {
@@ -221,22 +237,28 @@ public class SlideModel implements Serializable {
     }
 
     public View getView() {
+        /*File bg_image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), bgimage+".jpg");
+
+        if (bg_image.exists())
+        {
+            Bitmap bitmap=BitmapFactory.decodeFile(bg_image.getAbsolutePath());
+            BitmapDrawable bg_drawable=new BitmapDrawable(context.getResources(),bitmap);
+            layout.setBackground(bg_drawable);
+        }
+        else
+        {
+            ResourceMissing.downloadResource(bgimage);
+        }*/
         layout.removeAllViews();
         for (ComponentModel component : components) {
             View child = component.getView();
             if (child != null) {
-                System.out.println("child added:" + child);
+            //    System.out.println("child added:" + child);
                 layout.addView(child);
             }
 
         }
-        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), bgimage+".jpg");
-        if (imagefile.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagefile.getAbsolutePath());
-               layout.setBackground(new BitmapDrawable(context.getResources(),bitmap));
-        } else {
-            ResourceMissing.downloadResource(bgimage);
-        }
+
         if (animate && enter_animation!=null)
             layout.startAnimation(enteranimation);
         return layout;
@@ -263,7 +285,7 @@ public class SlideModel implements Serializable {
     }
 
     public void start_audio() {
-        System.out.println("slide Id in start audio"+id);
+      //  System.out.println("slide Id in start audio"+id);
         File audiofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), audio + ".mp3");
         if (audiofile.exists()) {
             player = new MediaPlayer();

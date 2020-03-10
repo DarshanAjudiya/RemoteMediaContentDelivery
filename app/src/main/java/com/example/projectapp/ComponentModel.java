@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import android.content.Context;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -17,6 +18,8 @@ import com.example.projectapp.extras.ResourceMissing;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -202,7 +205,7 @@ public class ComponentModel {
 
     public void setEnter_animation(AnimationModel enter_animation) {
         this.enter_animation = enter_animation;
-        System.out.println("Enter animation set");
+        //System.out.println("Enter animation set");
     }
 
     public AnimationModel getExit_animation() {
@@ -211,7 +214,7 @@ public class ComponentModel {
 
     public void setExit_animation(AnimationModel exit_animation) {
         this.exit_animation = exit_animation;
-        System.out.println("Exit animation set");
+        //System.out.println("Exit animation set");
     }
 
     public ComponentModel(Integer id, String type, Integer left, Integer top, Double width, Double height, String uri, String shadow, Integer scaleX, Integer scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, AnimationModel enter_animation, AnimationModel exit_animation) {
@@ -292,12 +295,12 @@ public class ComponentModel {
 
 
             view.setLayoutParams(comonentlayoutparam);
-            view.setX(top);
-            view.setY(left);
+            view.setX(left);
+            view.setY(top);
         } else if (playlistlayout != null) {
             playlistlayout.setLayoutParams(comonentlayoutparam);
-            playlistlayout.setX(top);
-            playlistlayout.setY(left);
+            playlistlayout.setX(left);
+            playlistlayout.setY(top);
         }
 
 
@@ -334,10 +337,14 @@ public class ComponentModel {
             if (angle != null)
                 imageview.setRotation(angle);
 
-            System.out.println("imageview initialised");
+           // System.out.println("imageview initialised");
         } else {
-
-
+            /*try {
+                imagefile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+            ResourceMissing.downloadResource(id);
         }
 
         return imageview;
@@ -349,11 +356,25 @@ public class ComponentModel {
         if (videofile.exists()) {
             videoView = new VideoView(context);
             videoView.setVideoPath(videofile.getAbsolutePath());
-
 //            videoView.setVideoURI(Uri.parse("android.resdource://" + context.getApplicationContext().getPackageName() + "/" + id));
             is_videoview = true;
+            FileInputStream inputStream;
+            try {
+                inputStream = new FileInputStream(videofile.getAbsoluteFile());
+                MediaMetadataRetriever retriever=new MediaMetadataRetriever();
+                retriever.setDataSource(inputStream.getFD());
+                System.out.println("bitrate bits per second: "+retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE));
+               // System.out.println("bitrate bits per second: "+retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE));
+            } catch (IOException | RuntimeException e) {
+                e.printStackTrace();
+            }
 
         } else {
+           /* try {
+                videofile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
             ResourceMissing.downloadResource(id);
         }
         return videoView;
@@ -378,8 +399,13 @@ public class ComponentModel {
             }
 
             webview.loadDataWithBaseURL(null, data, "text/html", "UTF-8", null);
-            System.out.println("Webview initialized:" + webview);
+            //System.out.println("Webview initialized:" + webview);
         } else {
+            /*try {
+                htmlfile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
             ResourceMissing.downloadResource(id);
         }
         return webview;
@@ -387,10 +413,11 @@ public class ComponentModel {
 
     public View getView() {
 
-        System.out.println("component returned to slide:");
+       // System.out.println("component returned to slide:");
         if (type.equals("playlist") && playlistModel != null) {
-            System.out.println("Returning playlist model");
+           // System.out.println("Returning playlist model");
             slide = playlistModel.getSlide();
+            playlistlayout.removeAllViews();
             playlistlayout.addView(slide.getView());
             slide.start_audio();
             myHandler = new Handler();

@@ -53,7 +53,7 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
                 line = reader.readLine();
             }
 
-            System.out.println(data);
+            //System.out.println(data);
             JSONArray array = new JSONArray(data);
             JSONObject main = array.getJSONObject(0);
             JSONObject object = main.getJSONObject("apkData");
@@ -68,8 +68,7 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
                 appversioncode = info.versionCode;
             }
 
-            System.out.println("Current version:" +
-                    appversioncode + "\nserverappversion:" + versioncode);
+            //System.out.println("Current version:" + appversioncode + "\nserverappversion:" + versioncode);
              /*   File f=getApplicationContext().getFilesDir();
                     System.out.println(f.getAbsolutePath());*/
             if (appversioncode <= versioncode) {
@@ -99,7 +98,7 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
                         Toast.makeText(context.getApplicationContext(), "" + Environment.getRootDirectory().canWrite(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                System.out.println(Environment.getRootDirectory().canWrite());
+                //System.out.println(Environment.getRootDirectory().canWrite());
 
                 if (checkRootMethod1() || checkRootMethod2() || checkRootMethod3()) {
                     handler.post(new Runnable() {
@@ -114,7 +113,7 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
                     Uri fileuri;
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                         fileuri = getURI(context.getApplicationContext(), dest);
-                        System.out.println(fileuri.toString());
+                    //    System.out.println(fileuri.toString());
                     } else
 
                         fileuri = Uri.fromFile(dest);

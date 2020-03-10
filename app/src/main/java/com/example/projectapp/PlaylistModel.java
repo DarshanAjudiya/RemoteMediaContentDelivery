@@ -77,7 +77,7 @@ public class PlaylistModel {
 
     public void init(Context context) {
         this.context = context;
-        System.out.println("into playlist init");
+      //  System.out.println("into playlist init");
         for (SlideModel slide : slides) {
             slide.init(context, this);
         }

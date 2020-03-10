@@ -1,6 +1,7 @@
 package com.example.projectapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.projectapp.systemsdata.adBotService;
+
 public class MainActivity extends AppCompatActivity {
     public String[] EXTERNAL_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent service=new Intent(getApplicationContext(), adBotService.class);
+        startService(service);
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null)
@@ -33,15 +38,15 @@ public class MainActivity extends AppCompatActivity {
         checkpermision();
         FrameLayout layout = findViewById(R.id.fragmentContainer);
         list1 = helper.getplaylist(null);
-        list1.printall();
+       // list1.printall();
 
         DisplayMetrics displayMetrics=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         list1.parent_width= Float.valueOf(displayMetrics.widthPixels);
         list1.parent_height= Float.valueOf(displayMetrics.heightPixels);
         list1.init(this);
-        list1.printall();
-        System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
+       // list1.printall();
+       // System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -121,5 +126,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+    }
 }

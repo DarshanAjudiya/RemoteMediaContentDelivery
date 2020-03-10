@@ -49,7 +49,7 @@ public class Componentfragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_component,container,false);
 
-        System.out.println("into oncreate view");
+        //System.out.println("into oncreate view");
         ConstraintLayout layout=v.findViewById(R.id.ParentLayout);
      //   layout.addView(slide.getView());\
         View x=slide.getView();

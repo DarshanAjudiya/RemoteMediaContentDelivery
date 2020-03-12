@@ -32,8 +32,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Check for  available Updates
-
-
+    /*    UpdateChecker updateChecker=new UpdateChecker(getApplicationContext());
+        updateChecker.execute();
+*/
         //Initilize and start background service that monitor Battery Status and Memory Status
         Intent service = new Intent(getApplicationContext(), adBotService.class);
         startService(service);

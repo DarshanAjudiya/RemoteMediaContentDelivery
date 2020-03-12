@@ -331,7 +331,7 @@ public class SlideModel implements Serializable {
       //  System.out.println("slide Id in start audio"+id);
 
         //get audio file from storage where it's located
-        File audiofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), audio + ".mp3");
+        File audiofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), audio + ".mp3");
         if (audiofile.exists()) {   //if audiofile is available
             //initialize mediaplayer
             player = new MediaPlayer();

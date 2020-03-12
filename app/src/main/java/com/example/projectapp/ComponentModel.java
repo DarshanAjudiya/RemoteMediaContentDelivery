@@ -370,7 +370,7 @@ public class ComponentModel {
         SVGImageView imageview = null;
 
         //get FIle from external storage by uri
-        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), uri);
+        File imagefile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
         if (imagefile.exists()) {
             //if image exist initialize SVGImageview
             imageview = new SVGImageView(context);
@@ -417,7 +417,7 @@ public class ComponentModel {
         VideoView videoView = null;
 
         //get file from storage
-        File videofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), uri);
+        File videofile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), uri);
 
         if (videofile.exists()) {
             //if file exists initialize videoview
@@ -548,7 +548,7 @@ public class ComponentModel {
         if (exitanimation != null) {
             if (type.equals("playlist")) {
                 playlistlayout.startAnimation(exitanimation);
-            } else {
+            } else if(view!=null){
                 view.startAnimation(exitanimation);
             }
         }

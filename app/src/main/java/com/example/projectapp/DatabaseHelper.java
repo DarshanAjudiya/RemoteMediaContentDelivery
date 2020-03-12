@@ -75,8 +75,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //insert_slide inserts info of slide and calls insert_component method for components it contains
     public int insert_slide(SlideModel slide, int pid) {
-        //get SQLitedatabase instance in writable mode
-        SQLiteDatabase db = this.getWritableDatabase();
 
         //get data from SlideModel and put in ContentValues's instance
         ContentValues values = new ContentValues();
@@ -104,6 +102,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put("exitanim", exit);
             }
         }
+        //get SQLitedatabase instance in writable mode
+        SQLiteDatabase db = this.getWritableDatabase();
 
         //call insert method of SQLiteDatabase to to insert data into slide table
         int rowcount = (int) db.insert(slides, null, values);
@@ -124,7 +124,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //insert_component inserts data of componentModel into component table
     public int insert_component(ComponentModel component, int uid) {
 
-        SQLiteDatabase db = getWritableDatabase();
         //get Values from componentModel object and put into contentValues object values
         ContentValues values = new ContentValues();
         values.put("cid", component.getId());
@@ -162,6 +161,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put("exitanim", exit);
             }
         }
+        SQLiteDatabase db = getWritableDatabase();
         //call insert method of SQLiteDatabase to to insert data into component table
         long row = db.insert(this.component, null, values);
         db.close();

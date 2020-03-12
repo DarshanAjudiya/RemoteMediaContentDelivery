@@ -50,8 +50,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //insert_playlist method insert info of playlist into playlist table and call insert_slide method to insert slide available in playlist
     public int insert_playlist(PlaylistModel list) {
-        //get Writable instance of SQLitedatabase
-        SQLiteDatabase db = this.getWritableDatabase();
         //read from PlaylistModel and put values in ContentValues to upload in database
         ContentValues values = new ContentValues();
         values.put("pid", list.getId());
@@ -62,6 +60,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         for (SlideModel s : list.getSlides())
             insert_slide(s, list.getId());
 
+        //get Writable instance of SQLitedatabase
+        SQLiteDatabase db = this.getWritableDatabase();
         //call insert method of SQLiteDatabase to to insert data into playlist table
         int rowcount = (int) db.insert(playlist, null, values);
 

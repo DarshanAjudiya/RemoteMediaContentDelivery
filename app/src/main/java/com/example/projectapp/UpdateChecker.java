@@ -26,6 +26,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+
+
+//UpdateChecker class used to check for update of application and install updates
 public class UpdateChecker extends AsyncTask<Void, Void, Void> {
     Context context;
     Handler handler;
@@ -39,12 +42,13 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         try {
 
+            //Url from where it will check if there is new update of application
             URL url = new URL(context.getString(R.string.checkupdateurl));
 
+            //Read (version info of application)Json data from specified url
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream stream = connection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-
             String line = reader.readLine();
             String data = "";
 
@@ -54,11 +58,13 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
             }
 
             //System.out.println(data);
+            //read version code of application placed of server
             JSONArray array = new JSONArray(data);
             JSONObject main = array.getJSONObject(0);
             JSONObject object = main.getJSONObject("apkData");
             long versioncode = object.getLong("versionCode");
 
+            //Get Version code of current application
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             long appversioncode = -1;
 
@@ -69,19 +75,18 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
             }
 
             //System.out.println("Current version:" + appversioncode + "\nserverappversion:" + versioncode);
-             /*   File f=getApplicationContext().getFilesDir();
-                    System.out.println(f.getAbsolutePath());*/
+
+            //Compare Version codes
             if (appversioncode <= versioncode) {
+                //If update is available download new application and install that application
+
+                //Url to download updated application
                 url = new URL(context.getString(R.string.applicationurl));
                 connection = (HttpURLConnection) url.openConnection();
-                //File dest=new File(Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS),"app-release.apk");
 
-
+                //Download Application
                 File dest = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "app-release.apk");
-                //  File dest=new File(getApplicationContext().getFilesDir(),"app-release.apk");
-
                 //     System.out.println(dest.getAbsolutePath());
-
                 FileOutputStream outputStream = new FileOutputStream(dest, false);
                 stream = connection.getInputStream();
                 byte[] buffer = new byte[1024];
@@ -91,15 +96,16 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
                 }
                 outputStream.close();
 
-                //checksuperuser();
-                handler.post(new Runnable() {
+               /* handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(context.getApplicationContext(), "" + Environment.getRootDirectory().canWrite(), Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
                 //System.out.println(Environment.getRootDirectory().canWrite());
 
+
+                //check if device is rooted and appplication have root access
                 if (checkRootMethod1() || checkRootMethod2() || checkRootMethod3()) {
                     handler.post(new Runnable() {
                         @Override
@@ -107,16 +113,19 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
                             Toast.makeText(context, "in if", Toast.LENGTH_SHORT).show();
                         }
                     });
+                    //Install downloaded application silently
                     installapk(dest);
                 } else {
 
+                    //get Uri of downloaded applcation
                     Uri fileuri;
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                         fileuri = getURI(context.getApplicationContext(), dest);
                     //    System.out.println(fileuri.toString());
                     } else
-
                         fileuri = Uri.fromFile(dest);
+
+                    //create intent to send request to install application
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(fileuri, "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -131,20 +140,23 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    public void installapk(File dest) {
+    public void installapk(File dest) { //install new updated application using abd command
+
+        //check if file exists
         if (dest.exists()) {
             String command;
             command = "adb install -r " + dest.getAbsolutePath();
             Process proc = null;
-            handler.post(new Runnable() {
+            /*handler.post(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(context.getApplicationContext(), "In installapk", Toast.LENGTH_SHORT).show();
                 }
-            });
+            });*/
             try {
-                proc = Runtime.getRuntime().exec(new String[]{"su", "-c", command});
 
+                //execute command
+                proc = Runtime.getRuntime().exec(new String[]{"su", "-c", command});
                 proc.waitFor();
 
             } catch (IOException | InterruptedException e) {
@@ -152,11 +164,13 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
             }
         }
     }
-
+    //getUri() returns content uri of specific file passed as parameter
     private Uri getURI(Context context, File dest) {
+        //Get Content URI of file like content:// instead of file://
         return FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", dest);
     }
 
+    //checkrootMethod 1 2 and 3 check for either device is rooted or not(does device have provides root access)
 
     public boolean checkRootMethod1() {
         String buildTags = android.os.Build.TAGS;

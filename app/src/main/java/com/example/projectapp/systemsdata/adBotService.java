@@ -13,12 +13,15 @@ import androidx.annotation.Nullable;
 
 import java.util.Calendar;
 
+
 public class adBotService  extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+    //this broadcastReceiver will execute onreceive method every time when power cable connects/disconnects or battery percentage level changes
     public BroadcastReceiver batteryStatusReceiver= new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

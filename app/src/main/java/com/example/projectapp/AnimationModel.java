@@ -4,17 +4,21 @@ import android.content.Context;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+//AniamationModel class used to store animation data and create Android.view.Animation object
 public class AnimationModel {
-    private String type;
-    private Integer delay;
-    private Integer duration;
+    private String type;        //animation type
+    private Integer delay;      //delay before starting aniamation
+    private Integer duration;   //Duration of animation
 
+
+    //constructor to initialize instance variables
     public AnimationModel(String type, Integer delay, Integer duration) {
         this.type = type;
         this.delay = delay;
         this.duration = duration;
     }
 
+    //getter and setter methods of instance variables
     public String getType() {
         return type;
     }
@@ -41,14 +45,17 @@ public class AnimationModel {
 
     public void printall() {
         System.out.println("Animation");
-        ;
+
         System.out.println(type);
         System.out.println(duration);
         System.out.println(delay);
     }
 
+
+    //getAnimation method create object of Android.view.Animation
     public Animation getAnimation(Context context) {
         Animation animation = null;
+        //check type and create Instance of Animation relatively
         switch (type) {
             case "slide-in":
             case "slide-in-left":   animation = AnimationUtils.loadAnimation(context,R.anim.slide_in_left);
@@ -83,14 +90,17 @@ public class AnimationModel {
             case "zoom-out-right":animation = AnimationUtils.loadAnimation(context,R.anim.zoom_out_right);
                                     break;
         }
+        //if there will be no animation relatd to type animation willbe null
         if (animation!=null) {
+
+            //set Duration and Delay of animation
             if (duration != null)
                 animation.setDuration(duration * 1000);
             if (delay != null)
                 animation.setStartOffset(delay * 1000);
         }
 
-
+        //Return Animation object
         return animation;
     }
 }

@@ -2,15 +2,17 @@ package com.example.projectapp.systemsdata;
 
 import java.util.Date;
 
+//this class is used to store device's battery information
 public class BatteryDetails {
-    public static Double previousLevel = 0d;
-    public static Double CurrentLevel = 0d;
+    public static Double previousLevel = 0d; //previous battery percentage
+    public static Double CurrentLevel = 0d; //current battery percentage
     public static Boolean is_charging;
     public static Date last_charged;
     public static String health;
     public static String alertMessage;
     public static Boolean is_present;
 
+    //this method will return all information combined in form of string
     public static String getBatteryInfo() {
         if (!is_present) {
             return "Battery not present!!!";

@@ -12,19 +12,29 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+//This class is used to parse Json data into java object retrieved from server
 public class Parser {
+
+	//parsetoobject method takes json string and convert it ibto java object and returns array of PlaylistModel
+	//this methods throws JSONException
 	public static PlaylistModel[] parsetoobject(String json) throws JSONException {
+
 		JSONArray array=new JSONArray(json);
 
+		//create PlaylistModel Array
 		PlaylistModel[] playlists =new PlaylistModel[array.length()];
+
 		for(int k=0;k<array.length();k++) {
 			PlaylistModel list = null;
+
 			JSONObject obj=array.getJSONObject(k);
 			Integer pid = obj.getInt("id");
 			String name = obj.getString("name");
 			Integer height = obj.getInt("height");
 			Integer width = obj.getInt("width");
 			JSONArray slides = obj.getJSONArray("slides");
+
+			//create List of SlideModel
 			List<SlideModel> slideModels = new ArrayList<SlideModel>();
 			for (int i = 0, length = slides.length(); i < length; i++) {
 				Integer audio = null;
@@ -79,6 +89,8 @@ public class Parser {
 						aduration = enter.getInt("duration");
 					exit_animation = new AnimationModel(atype, delay, aduration);
 				}
+
+				//Create List of ComponentModel
 				List<ComponentModel> componentModels = new ArrayList<ComponentModel>();
 				if (slide.has("components")) {
 					JSONArray components = slide.getJSONArray("components");
@@ -156,16 +168,22 @@ public class Parser {
 
 							exitanimation = new AnimationModel(atype, delay, aduration);
 						}
+						//add New ComponentModel in List of COmponentModel
 						componentModels.add(new ComponentModel(cid, type, left, top, cwidth, cheight, uri, shadow, scaleX, scaleY, z_index, angle, opacity, onClick, is_animate, enteranimation, exitanimation));
 					}
 				}
+				//Create Object of SlideModel from data retrieved from Json string
 				SlideModel model = new SlideModel(sid, bgimage, duration, next, audio, animate, name, bgcolor,enter_animation,exit_animation);
 				model.setComponents(componentModels);
 				slideModels.add(model);
 			}
+			//create new PlaylistModel object from data retrived from json string
 			list = new PlaylistModel(pid, name, height, width, slideModels);
+
+			//add PlaylistModel in to array of PlaylistModel
 			playlists[k]=list;
 		}
+		//retrun Playlist
 		return playlists;
 	}
 }

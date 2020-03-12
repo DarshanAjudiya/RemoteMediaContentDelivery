@@ -15,7 +15,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+
+//getData class is used to download data from server and store that data in database
 public class getData extends AsyncTask<Void, Void, Void> {
+
     DatabaseHelper helper;
     Context context;
 
@@ -25,13 +28,19 @@ public class getData extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+        //Get data from Provided URL and store that data into SQLite Database
         helper = new DatabaseHelper(context);
         try {
+            //Get URL specified URL
             URL url = new URL("https://jsonblob.com/api/212f0a09-5319-11ea-8e7b-552f2d86fbba");
 
+            //Establish HttpUrlConnection and get InputStream of created connection
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connection.getInputStream();
+            //Create BufferedReader to read data from InputStream of Connection*
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            //Read data from BufferedReader
             String line = bufferedReader.readLine();
             String data = "";
             while (line != null) {
@@ -40,19 +49,24 @@ public class getData extends AsyncTask<Void, Void, Void> {
             }
             //System.out.println(data);
 
-            PlaylistModel[] myplaylist =null;
+            //parse Json data retrieved from server to java object
+            PlaylistModel[] myplaylist = null;
             try {
+                //parses using Parser.parsetoobject()
                 myplaylist = Parser.parsetoobject(data);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            helper.onUpgrade(helper.getWritableDatabase(),1,1);
-            for (PlaylistModel list:myplaylist)
-            {
+            //call onUpgrade of database helper to clear older database
+            helper.onUpgrade(helper.getWritableDatabase(), 1, 1);
+
+            //Store data retrieved from server  into Database
+            for (PlaylistModel list : myplaylist) {
                 list.printall();
                 int count = helper.insert_playlist(list);
-               // System.out.println("playlist added :" + count);
+                // System.out.println("playlist added :" + count);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

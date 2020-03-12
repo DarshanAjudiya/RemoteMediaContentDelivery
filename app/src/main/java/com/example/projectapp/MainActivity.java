@@ -19,109 +19,85 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.projectapp.systemsdata.adBotService;
 
 public class MainActivity extends AppCompatActivity {
+    //Declared Permission Required
     public String[] EXTERNAL_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
+    //DatabaseHelper class object declaration to manage  SQlite DB connection
     DatabaseHelper helper;
     PlaylistModel list1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent service=new Intent(getApplicationContext(), adBotService.class);
-        startService(service);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null)
-        {
+        //Check for  available Updates
+
+
+        //Initilize and start background service that monitor Battery Status and Memory Status
+        Intent service = new Intent(getApplicationContext(), adBotService.class);
+        startService(service);
+
+        //Initialise databasehelper class instance
+        if (savedInstanceState == null) {
             helper = new DatabaseHelper(this);
 
-        checkpermision();
-        FrameLayout layout = findViewById(R.id.fragmentContainer);
-        list1 = helper.getplaylist(null);
-       // list1.printall();
+            //Check for Permission
+            checkpermision();
+            FrameLayout layout = findViewById(R.id.fragmentContainer);
 
-        DisplayMetrics displayMetrics=new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        list1.parent_width= Float.valueOf(displayMetrics.widthPixels);
-        list1.parent_height= Float.valueOf(displayMetrics.heightPixels);
-        list1.init(this);
-       // list1.printall();
-       // System.out.println("\n\n\n\nadding Fragment\n\n\n\n");
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+            //get First Playlist from database
+            list1 = helper.getplaylist(null);
+            // list1.printall();
+
+            if (list1 != null) {
+
+                //Get Display Width and height using DisplayMetrics
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+                //set Display width/height as parent_height/width of playlist
+                list1.parent_width = Float.valueOf(displayMetrics.widthPixels);
+                list1.parent_height = Float.valueOf(displayMetrics.heightPixels);
+
+                //call init method pf playlist to initialize playlist's slides and components
+                list1.init(this);
+
+                //get ComponentFragment instance
+                // pass playlistModel's slideModel instance as parameter
                 Componentfragment componentfragment = Componentfragment.getInstance(list1.getSlide());
+                //Initialize fragment manager to begin transaction of fragment
                 FragmentManager manager = getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
+
+                //Replace fragment with fragment container using fragment transaction
                 transaction.replace(R.id.fragmentContainer, componentfragment);
 
+                //commit transaction to show fragment on display in main activity
                 transaction.commit();
 
+
             }
-        }, 5000);
+            else
+            {
+                //Show Dialog Box that shows there is no data in database
+            }
 
-    }
-/*
-        ImageView imageView=new ImageView(this);
-        imageView.setImageResource(R.drawable.b);
-        imageView.setScaleType(ImageView.ScaleType.FIT_START);
-        imageView.setAdjustViewBounds(false);
-        imageView.setBackgroundColor(Color.parseColor("#ffffff"));
-        Animation anims= AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left);
-        anims.setDuration(2000);
-        imageView.setAnimation(anims);
-        imageView.setLayoutParams(new FrameLayout.LayoutParams(1000,500));
-        VideoView videoView=new VideoView(this);
-        videoView.setVideoURI(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.animvideo));
-        FrameLayout.LayoutParams param=new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        videoView.setLayoutParams(param);
-        videoView.setX(0);
-        videoView.setZ(2);
-        System.out.println("Height:"+imageView.getHeight());
-        videoView.setY(200);
-
-
-        WebView webView =new WebView(this);
-        webView.loadUrl("https://stackoverflow.com/questions/35669413/why-framelayout-isnt-setting-z-order-correctly-in-my-layout");
-        webView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        webView.setZ(1);
-
-        layout.addView(videoView);
-        layout.addView(webView);
-        layout.addView(imageView);
-        videoView.start();
-        videoView.setAnimation(anims);
-
-
-        View view = getview(type);
-        if (view!=null)
-        {
-
-        }*/
-    }
-
-   /* public View getview(String type)
-    {
-        switch(type)
-        {
-            case "image":   ImageView imgview=new ImageView(this);
-                            imgview.setImageResource(R.drawable.b);
-                            return imgview;
-
-            case "video":   VideoView videov=new VideoView(this);
-                            videov.setVideoURI(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.animvideo));
-                            return videov;
-            default:        return null;
         }
 
-    }*/
+    }
+
 
     public void checkpermision() {
+        //First check if Read/write_external_storage permission is already granted or not
         int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permission != PackageManager.PERMISSION_GRANTED) {
+            //If permission is not granted request for permission
             ActivityCompat.requestPermissions(this, EXTERNAL_PERMISSIONS, 1);
         }
+        //Check if Install Package permission is granted or not
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INSTALL_PACKAGES) != PackageManager.PERMISSION_GRANTED) {
+            //request for permission
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INSTALL_PACKAGES}, 1);
         }
     }

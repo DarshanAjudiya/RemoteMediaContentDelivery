@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+//sqliteopenhelper class to interact with and handle SQLite database
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DBNAME = "mediacontent";
     public static final String playlist = "playlist";
@@ -37,6 +39,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        //Drop existing tables and create new table
         db.execSQL("drop table IF  exists " + playlist);
         db.execSQL("drop table if exists " + slides);
         db.execSQL("drop table if exists " + component);
@@ -44,23 +48,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
+    //insert_playlist method insert info of playlist into playlist table and call insert_slide method to insert slide available in playlist
     public int insert_playlist(PlaylistModel list) {
-
+        //get Writable instance of SQLitedatabase
+        SQLiteDatabase db = this.getWritableDatabase();
+        //read from PlaylistModel and put values in ContentValues to upload in database
         ContentValues values = new ContentValues();
         values.put("pid", list.getId());
         values.put("name", list.getName());
         values.put("height", list.getHeight());
         values.put("width", list.getWidth());
+        //Insert all slide placed in PlaylistModel class into slide table one by one
         for (SlideModel s : list.getSlides())
             insert_slide(s, list.getId());
-        SQLiteDatabase db = this.getWritableDatabase();
-        int x = (int) db.insert(playlist, null, values);
+
+        //call insert method of SQLiteDatabase to to insert data into playlist table
+        int rowcount = (int) db.insert(playlist, null, values);
+
+        //close the database
         db.close();
-        return x;
+
+        //return number of row inserted in playlist table
+        return rowcount;
     }
 
-    public int insert_slide(SlideModel slide, int pid) {
 
+    //insert_slide inserts info of slide and calls insert_component method for components it contains
+    public int insert_slide(SlideModel slide, int pid) {
+        //get SQLitedatabase instance in writable mode
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //get data from SlideModel and put in ContentValues's instance
         ContentValues values = new ContentValues();
         values.put("pid", pid);
         values.put("sid", slide.getId());
@@ -73,29 +91,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("animate", slide.getAnimate());
         values.put("audio", slide.getAudio());
 
+        //If slide have animation put that animation info into animation table
         if (slide.getAnimate() != null && slide.getAnimate()) {
+
+            //Insert enter and exit animation of slide into animation table
             int enter = insert_anim(slide.getEnter_animation());
             int exit = insert_anim(slide.getExit_animation());
-            if (enter != -1)
+            if (enter != -1) {
                 values.put("enteranim", enter);
-            if (exit != -1)
+            }
+            if (exit != -1) {
                 values.put("exitanim", exit);
+            }
         }
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        long x = db.insert(slides, null, values);
-        Cursor c = db.rawQuery("select uid from " + slides + " where rowid=" + x, null);
-        if (c.moveToFirst()) {
-            int uid = c.getInt(c.getColumnIndex("uid"));
+        //call insert method of SQLiteDatabase to to insert data into slide table
+        int rowcount = (int) db.insert(slides, null, values);
+        Cursor dataCursor = db.rawQuery("select uid from " + slides + " where rowid=" + rowcount, null);
+        if (dataCursor.moveToFirst()) {
+            int uid = dataCursor.getInt(dataCursor.getColumnIndex("uid"));
+
+            //call insert_component method for every components lies in slide
             for (ComponentModel comp : slide.getComponents())
                 insert_component(comp, uid);
         }
         db.close();
-        return 0;
+
+        //return  number of rows inserted in slide table
+        return rowcount;
     }
 
+    //insert_component inserts data of componentModel into component table
     public int insert_component(ComponentModel component, int uid) {
 
+        SQLiteDatabase db = getWritableDatabase();
+        //get Values from componentModel object and put into contentValues object values
         ContentValues values = new ContentValues();
         values.put("cid", component.getId());
         values.put("sid", uid);
@@ -109,97 +139,140 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("scalex", component.getScaleX());
         values.put("scaley", component.getScaleY());
         values.put("z_index", component.getZ_index());
-        if (component.getOpacity() == null)
+        if (component.getOpacity() == null) {
             values.put("opacity", 1);
-        else
+        }
+        else {
             values.put("opacity", component.getOpacity());
+        }
 
         values.put("angle", component.getAngle());
         values.put("onclick", component.getOnClick());
         values.put("animate", component.getIs_animate());
+
+        //insert animation info of component onto animation table
         if (component.getIs_animate() != null && component.getIs_animate()) {
+            //call insert_anim method to insert enter and exit animation data into database
             int enter = insert_anim(component.getEnter_animation());
             int exit = insert_anim(component.getExit_animation());
-            if (enter != -1)
+            if (enter != -1) {
                 values.put("enteranim", enter);
-            if (exit != -1)
+            }
+            if (exit != -1) {
                 values.put("exitanim", exit);
+            }
         }
-        SQLiteDatabase db = getWritableDatabase();
+        //call insert method of SQLiteDatabase to to insert data into component table
         long row = db.insert(this.component, null, values);
         db.close();
+
+        //return row id
         return (int) row;
     }
 
+
+    //insert_anim method is used to insert animation info to animation table
     public int insert_anim(AnimationModel animate) {
         SQLiteDatabase db = getWritableDatabase();
+
+        //get data from AnimationModel an put into ContentValues instance
         ContentValues values = new ContentValues();
         values.put("type", animate.getType());
         values.put("delay", animate.getDelay());
         values.put("duration", animate.getDuration());
-        long row = db.insert(animations, null, values);
-        Cursor c = db.rawQuery("select animid from " + animations + " where rowid=" + row + "", null);
-        int x = -1;
 
-        if (c.moveToFirst())
-            x = c.getInt(c.getColumnIndex("animid"));
+        //call insert method of SQLiteDatabase to to insert data into animation table
+        long row = db.insert(animations, null, values);
+
+        //execute select query to get animid  of currently inserted row
+        Cursor dataCursor = db.rawQuery("select animid from " + animations + " where rowid=" + row + "", null);
+        int animid = -1;
+
+        if (dataCursor.moveToFirst())
+            animid = dataCursor.getInt(dataCursor.getColumnIndex("animid"));
         db.close();
-        return x;
+
+        //return animid
+        return animid;
     }
 
-    public PlaylistModel getplaylist(@Nullable Integer id) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor c;
-        if (id != null)
-            c = db.query(playlist, null, "pid=?", new String[]{"" + id}, null, null, null);
-        else
-            c = db.query(playlist, null, null, null, null, null, "pid");
 
+    //getPlaylist method retrieve data from database and return playlistModel Object
+    public PlaylistModel getplaylist(@Nullable Integer id) {
+
+        //Create SQLiteDatabase object in readable mode
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor dataCursor;
+
+        //execute select query on playlist table and get playlist data
+        if (id != null)
+            dataCursor = db.query(playlist, null, "pid=?", new String[]{"" + id}, null, null, null);
+        else
+            dataCursor = db.query(playlist, null, null, null, null, null, "pid");
+
+        //create instance of PlaylistModel from data retried from DB
         PlaylistModel list = null;
-        if (c.moveToFirst()) {
-            list = new PlaylistModel(c.getInt(0), c.getString(1), c.getInt(2), c.getInt(3), getSlide(c.getInt(0)));
-            return list;
+        if (dataCursor.moveToFirst()) {
+            //call getSlide Method to get SlideModels belongs to this playlist by using playlist id
+            list = new PlaylistModel(dataCursor.getInt(0), dataCursor.getString(1), dataCursor.getInt(2), dataCursor.getInt(3), getSlide(dataCursor.getInt(0)));
+
         }
+        //return playlistModel object
         return list;
     }
 
+    //getSlide method returns List of slideModel (slides) which have playlist_id(pid) as passed parameter
     public List<SlideModel> getSlide(Integer pid) {
         SQLiteDatabase db = getReadableDatabase();
-        List<SlideModel> allslides = new ArrayList<SlideModel>();
-        Cursor c;
 
-        c = db.query(slides, null, "pid=?", new String[]{"" + pid}, null, null, "uid");
+        //Initialize List<SlideModel> to store slides retrieved from database
+        List<SlideModel> allslides = new ArrayList<SlideModel>();
+        Cursor dataCursor;
+
+        //execute select query which returns records with pid as passed pid
+        dataCursor = db.query(slides, null, "pid=?", new String[]{"" + pid}, null, null, "uid");
+
         SlideModel slide = null;
-        if (c.moveToFirst()) {
+
+        //Create instance of slideModel  for all retrieved records and add them into allslides
+        //read data from cursor
+        if (dataCursor.moveToFirst()) {
             do {
 
-                Integer uid=c.getInt(c.getColumnIndex("uid"));
-                Integer sid = c.getInt(c.getColumnIndex("sid"));
-                Boolean anim = (c.getInt(c.getColumnIndex("animate")) == 1);
-                String name = c.getString(c.getColumnIndex("name"));
-                String bgcolor = c.getString(c.getColumnIndex("bgcolor"));
-                Integer bgimage = c.getInt(c.getColumnIndex("bgimage"));
-                Integer duration = c.getInt(c.getColumnIndex("duration"));
-                Integer next = c.getInt(c.getColumnIndex("next"));
-                Integer audio = c.getInt(c.getColumnIndex("audio"));
+                Integer uid=dataCursor.getInt(dataCursor.getColumnIndex("uid"));
+                Integer sid = dataCursor.getInt(dataCursor.getColumnIndex("sid"));
+                Boolean anim = (dataCursor.getInt(dataCursor.getColumnIndex("animate")) == 1);
+                String name = dataCursor.getString(dataCursor.getColumnIndex("name"));
+                String bgcolor = dataCursor.getString(dataCursor.getColumnIndex("bgcolor"));
+                Integer bgimage = dataCursor.getInt(dataCursor.getColumnIndex("bgimage"));
+                Integer duration = dataCursor.getInt(dataCursor.getColumnIndex("duration"));
+                Integer next = dataCursor.getInt(dataCursor.getColumnIndex("next"));
+                Integer audio = dataCursor.getInt(dataCursor.getColumnIndex("audio"));
 
-                AnimationModel senter = null, sexit = null;
+
+                AnimationModel enterAnimation = null, exitAnimation = null;
                 if (anim) {
 
-                    Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + c.getInt(c.getColumnIndex("enteranim"))}, null, null, null);
+                    //Retrieve animation data from animation table using enteranim and exitanim as animid and create AnimationModel instances enterAnimation ad exitAnimation
+                    Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + dataCursor.getInt(dataCursor.getColumnIndex("enteranim"))}, null, null, null);
                     if (c2.moveToFirst()) {
-                        senter = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
+                        enterAnimation = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
                     }
 
-                    c2 = db.query(animations, null, "animid=?", new String[]{"" + c.getInt(c.getColumnIndex("exitanim"))}, null, null, null);
+                    c2 = db.query(animations, null, "animid=?", new String[]{"" + dataCursor.getInt(dataCursor.getColumnIndex("exitanim"))}, null, null, null);
                     if (c2.moveToFirst()) {
-                        sexit = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
+                        exitAnimation = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
                     }
                 }
-                slide = new SlideModel(sid, bgimage, duration, next, audio, anim, name, bgcolor, senter,sexit);
+                //create instance of SlideModel by using data retrieved from table
+                slide = new SlideModel(sid, bgimage, duration, next, audio, anim, name, bgcolor, enterAnimation,exitAnimation);
 
+                //initialize  List<ComponentModel> to store ComponentModel object which are part of current slide
                 List<ComponentModel> components = new ArrayList<ComponentModel>();
+
+                //execute select query in component table for components where sid(slideid) is uid(unique id of current slide)
                 Cursor comp = db.query(component, null, "sid=?", new String[]{"" + uid}, null, null, "cid");
+                //read data from cursor
                 if (comp.moveToFirst()) {
                     do {
                         Integer id = comp.getInt(comp.getColumnIndex("cid"));
@@ -221,7 +294,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Boolean animate = (comp.getInt(comp.getColumnIndex("animate")) == 1);
                         AnimationModel enter = null, exit = null;
 
+
                         if (animate) {
+
+                            //get enter and exitanimation of component using enteranim and exitanim of component and create objects of AnimationModel enter and exit
                             Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + comp.getInt(comp.getColumnIndex("enteranim"))}, null, null, null);
                             if (c2.moveToFirst()) {
                                 enter = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
@@ -233,14 +309,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             }
 
                         }
-
+                        //create new componentModel from retrieve data and add that component object to List
                         components.add(new ComponentModel(id, type, left, top, width, height, uri, shadow, scalex, scaley, zindex, angle, opacity, onclick, animate, enter, exit));
                     } while (comp.moveToNext());
+                    //set components of slide by calling setComponents and pass List of componentModel as parameter
                     slide.setComponents(components);
 
                 }
+                //add slide to list of slideModel
                 allslides.add(slide);
-            } while (c.moveToNext());
+            } while (dataCursor.moveToNext());
+
+            //return list of SlideModel
             return allslides;
         }
         return null;

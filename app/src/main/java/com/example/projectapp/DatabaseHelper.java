@@ -15,10 +15,10 @@ import java.util.List;
 //sqliteopenhelper class to interact with and handle SQLite database
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DBNAME = "mediacontent";
-    public static final String playlist = "playlist";
-    public static final String slides = "slide";
-    public static final String component = "component";
-    public static final String animations = "animations";
+    public static final String PLAYLIST = "playlist";
+    public static final String SLIDES = "slide";
+    public static final String COMPONENT = "component";
+    public static final String ANIMATIONS = "animations";
 
 
     public DatabaseHelper(@Nullable Context context) {
@@ -28,31 +28,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //playlist table
-        db.execSQL("create table " + playlist + "(pid integer primary key ,name text,height  real, width real)");
+        db.execSQL("create table " + PLAYLIST + "(pid integer primary key ,name text,height  real, width real)");
         //slides table
-        db.execSQL("create table " + slides + "(uid integer primary key autoincrement,sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate numeric,enteranim integer,exitanim integer,audio integer)");
+        db.execSQL("create table " + SLIDES + "(uid integer primary key autoincrement,sid integer,pid integer,name text,bgcolor text,bgimage integer,duration integer,next integer,animate numeric,enteranim integer,exitanim integer,audio integer)");
         //component table
-        db.execSQL("create table " + component + "(cid integer,sid integer,type text,left_pos integer, top_pos integer, width real,height real,uri text,shadow text,scalex integer,scaley integer,z_index integer,opacity real,angle integer,onclick text,animate integer,enteranim integer,exitanim integer)");
+        db.execSQL("create table " + COMPONENT + "(cid integer,sid integer,type text,left_pos integer, top_pos integer, width real,height real,uri text,shadow text,scalex integer,scaley integer,z_index integer,opacity real,angle integer,onclick text,animate integer,enteranim integer,exitanim integer)");
         //animation table
-        db.execSQL("create table " + animations + "(animid integer primary key autoincrement,type text,duration integer,delay integer)");
+        db.execSQL("create table " + ANIMATIONS + "(animid integer primary key autoincrement,type text,duration integer,delay integer)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         //Drop existing tables and create new table
-        db.execSQL("drop table IF  exists " + playlist);
-        db.execSQL("drop table if exists " + slides);
-        db.execSQL("drop table if exists " + component);
-        db.execSQL("drop table if exists " + animations);
+        db.execSQL("drop table IF  exists " + PLAYLIST);
+        db.execSQL("drop table if exists " + SLIDES);
+        db.execSQL("drop table if exists " + COMPONENT);
+        db.execSQL("drop table if exists " + ANIMATIONS);
         this.onCreate(db);
     }
 
-    //insert_playlist method insert info of playlist into playlist table and call insert_slide method to insert slide available in playlist
+
+
+    /**
+     * insert_playlist method insert info of playlist into playlist table and call insert_slide method to insert slide available in playlist
+     * @param list
+     * @return
+     */
     public int insert_playlist(PlaylistModel list) {
         //read from PlaylistModel and put values in ContentValues to upload in database
         ContentValues values = new ContentValues();
-        values.put("pid", list.getId());
+
         values.put("name", list.getName());
         values.put("height", list.getHeight());
         values.put("width", list.getWidth());
@@ -63,23 +69,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //get Writable instance of SQLitedatabase
         SQLiteDatabase db = this.getWritableDatabase();
         //call insert method of SQLiteDatabase to to insert data into playlist table
-        int rowcount = (int) db.insert(playlist, null, values);
+        Cursor datacursor;
+        datacursor = db.query(PLAYLIST, null, "pid=?", new String[]{"" + list.getId()}, null, null, null);
+
+        int rowcount;
+        if(datacursor.getCount()>0)
+        {
+            rowcount = db.update(PLAYLIST,values,"pid=?",new String[]{list.getId()+""});
+        }
+        else {
+            values.put("pid", list.getId());
+            rowcount = (int) db.insert(PLAYLIST, null, values);
+        }
 
         //close the database
         db.close();
 
-        //return number of row inserted in playlist table
+        //return number of row affected in playlist table
         return rowcount;
     }
 
 
-    //insert_slide inserts info of slide and calls insert_component method for components it contains
+    /**
+     * insert_slide inserts info of slide and calls insert_component method for components it contains
+     *
+     * @param slide
+     * @param pid
+     * @return
+     */
     public int insert_slide(SlideModel slide, int pid) {
 
         //get data from SlideModel and put in ContentValues's instance
         ContentValues values = new ContentValues();
-        values.put("pid", pid);
-        values.put("sid", slide.getId());
+
         values.put("name", slide.getName());
         values.put("bgcolor", slide.getBgcolor());
         values.put("bgimage", slide.getBgimage());
@@ -88,26 +110,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("next", slide.getNext());
         values.put("animate", slide.getAnimate());
         values.put("audio", slide.getAudio());
-
-        //If slide have animation put that animation info into animation table
         if (slide.getAnimate() != null && slide.getAnimate()) {
 
             //Insert enter and exit animation of slide into animation table
-            int enter = insert_anim(slide.getEnter_animation());
-            int exit = insert_anim(slide.getExit_animation());
-            if (enter != -1) {
-                values.put("enteranim", enter);
+            if (slide.getEnter_animation()!=null) {
+                int enter = insert_anim(slide.getEnter_animation());
+                if (enter != -1) {
+                    values.put("enteranim", enter);
+                }
             }
-            if (exit != -1) {
-                values.put("exitanim", exit);
+            if (slide.getExit_animation()!=null) {
+                int exit = insert_anim(slide.getExit_animation());
+                if (exit != -1) {
+                    values.put("exitanim", exit);
+                }
             }
         }
+        //If slide have animation put that animation info into animation table
+
         //get SQLitedatabase instance in writable mode
         SQLiteDatabase db = this.getWritableDatabase();
 
         //call insert method of SQLiteDatabase to to insert data into slide table
-        int rowcount = (int) db.insert(slides, null, values);
-        Cursor dataCursor = db.rawQuery("select uid from " + slides + " where rowid=" + rowcount, null);
+        int rowcount;
+        Cursor dataCursor;
+
+        dataCursor = db.query(SLIDES, null, "pid=? AND sid=?", new String[]{"" + pid,""+slide.getId()}, null, null, "uid");
+
+        if(dataCursor.moveToFirst()) {
+
+            if (slide.getAnimate() != null && slide.getAnimate()) {
+                Integer enteranim = dataCursor.getInt(dataCursor.getColumnIndex("enteranim"));
+                if (enteranim!=null)
+
+                Integer exitanim = dataCursor.getInt(dataCursor.getColumnIndex("exitanim"));
+            }
+            rowcount = db.update(SLIDES, values, "pid=? AND sid=?", new String[]{"" + pid, "" + slide.getId()});
+        }
+        else {
+
+            values.put("pid", pid);
+            values.put("sid", slide.getId());
+
+
+            rowcount = (int) db.insert(SLIDES, null, values);
+        }
+        dataCursor = db.rawQuery("select uid from " + SLIDES + " where rowid=" + rowcount, null);
         if (dataCursor.moveToFirst()) {
             int uid = dataCursor.getInt(dataCursor.getColumnIndex("uid"));
 
@@ -117,11 +165,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         db.close();
 
-        //return  number of rows inserted in slide table
+        //return  number of rows affected in slide table
         return rowcount;
     }
 
-    //insert_component inserts data of componentModel into component table
+    /**
+     * insert_component inserts data of componentModel into component table
+     *
+     * @param component
+     * @param uid
+     * @return
+     */
     public int insert_component(ComponentModel component, int uid) {
 
         //get Values from componentModel object and put into contentValues object values
@@ -163,7 +217,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         SQLiteDatabase db = getWritableDatabase();
         //call insert method of SQLiteDatabase to to insert data into component table
-        long row = db.insert(this.component, null, values);
+        long row = db.insert(this.COMPONENT, null, values);
         db.close();
 
         //return row id
@@ -171,7 +225,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    //insert_anim method is used to insert animation info to animation table
+    /**
+     * insert_anim method is used to insert animation info to animation table
+     *
+     * @param animate
+     * @return
+     */
     public int insert_anim(AnimationModel animate) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -182,10 +241,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("duration", animate.getDuration());
 
         //call insert method of SQLiteDatabase to to insert data into animation table
-        long row = db.insert(animations, null, values);
+        long row = db.insert(ANIMATIONS, null, values);
 
         //execute select query to get animid  of currently inserted row
-        Cursor dataCursor = db.rawQuery("select animid from " + animations + " where rowid=" + row + "", null);
+        Cursor dataCursor = db.rawQuery("select animid from " + ANIMATIONS + " where rowid=" + row + "", null);
         int animid = -1;
 
         if (dataCursor.moveToFirst())
@@ -206,9 +265,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //execute select query on playlist table and get playlist data
         if (id != null)
-            dataCursor = db.query(playlist, null, "pid=?", new String[]{"" + id}, null, null, null);
+            dataCursor = db.query(PLAYLIST, null, "pid=?", new String[]{"" + id}, null, null, null);
         else
-            dataCursor = db.query(playlist, null, null, null, null, null, "pid");
+            dataCursor = db.query(PLAYLIST, null, null, null, null, null, "pid");
 
         //create instance of PlaylistModel from data retried from DB
         PlaylistModel list = null;
@@ -230,7 +289,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor dataCursor;
 
         //execute select query which returns records with pid as passed pid
-        dataCursor = db.query(slides, null, "pid=?", new String[]{"" + pid}, null, null, "uid");
+        dataCursor = db.query(SLIDES, null, "pid=?", new String[]{"" + pid}, null, null, "uid");
 
         SlideModel slide = null;
 
@@ -254,14 +313,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if (anim) {
 
                     //Retrieve animation data from animation table using enteranim and exitanim as animid and create AnimationModel instances enterAnimation ad exitAnimation
-                    Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + dataCursor.getInt(dataCursor.getColumnIndex("enteranim"))}, null, null, null);
-                    if (c2.moveToFirst()) {
-                        enterAnimation = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
+                    Integer enteranim = dataCursor.getInt(dataCursor.getColumnIndex("enteranim"));
+                    Integer exitanim = dataCursor.getInt(dataCursor.getColumnIndex("exitanim"));
+                    Cursor c2;
+                    if (enteranim!=null) {
+                        c2 = db.query(ANIMATIONS, null, "animid=?", new String[]{"" + dataCursor.getInt(dataCursor.getColumnIndex("enteranim"))}, null, null, null);
+                        if (c2.moveToFirst()) {
+                            enterAnimation = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
+                        }
                     }
-
-                    c2 = db.query(animations, null, "animid=?", new String[]{"" + dataCursor.getInt(dataCursor.getColumnIndex("exitanim"))}, null, null, null);
-                    if (c2.moveToFirst()) {
-                        exitAnimation = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
+                    if (exitanim!=null) {
+                        c2 = db.query(ANIMATIONS, null, "animid=?", new String[]{"" + dataCursor.getInt(dataCursor.getColumnIndex("exitanim"))}, null, null, null);
+                        if (c2.moveToFirst()) {
+                            exitAnimation = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
+                        }
                     }
                 }
                 //create instance of SlideModel by using data retrieved from table
@@ -271,7 +336,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 List<ComponentModel> components = new ArrayList<ComponentModel>();
 
                 //execute select query in component table for components where sid(slideid) is uid(unique id of current slide)
-                Cursor comp = db.query(component, null, "sid=?", new String[]{"" + uid}, null, null, "cid");
+                Cursor comp = db.query(COMPONENT, null, "sid=?", new String[]{"" + uid}, null, null, "cid");
                 //read data from cursor
                 if (comp.moveToFirst()) {
                     do {
@@ -298,12 +363,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         if (animate) {
 
                             //get enter and exitanimation of component using enteranim and exitanim of component and create objects of AnimationModel enter and exit
-                            Cursor c2 = db.query(animations, null, "animid=?", new String[]{"" + comp.getInt(comp.getColumnIndex("enteranim"))}, null, null, null);
+                            Cursor c2 = db.query(ANIMATIONS, null, "animid=?", new String[]{"" + comp.getInt(comp.getColumnIndex("enteranim"))}, null, null, null);
                             if (c2.moveToFirst()) {
                                 enter = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
                             }
 
-                            c2 = db.query(animations, null, "animid=?", new String[]{"" + comp.getInt(comp.getColumnIndex("exitanim"))}, null, null, null);
+                            c2 = db.query(ANIMATIONS, null, "animid=?", new String[]{"" + comp.getInt(comp.getColumnIndex("exitanim"))}, null, null, null);
                             if (c2.moveToFirst()) {
                                 exit = new AnimationModel(c2.getString(c2.getColumnIndex("type")), c2.getInt(c2.getColumnIndex("delay")), c2.getInt(c2.getColumnIndex("duration")));
                             }

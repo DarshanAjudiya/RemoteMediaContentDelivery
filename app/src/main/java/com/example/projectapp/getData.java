@@ -57,8 +57,6 @@ public class getData extends AsyncTask<Void, Void, Void> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //call onUpgrade of database helper to clear older database
-            helper.onUpgrade(helper.getWritableDatabase(), 1, 1);
 
             //Store data retrieved from server  into Database
             for (PlaylistModel list : myplaylist) {

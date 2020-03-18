@@ -77,7 +77,7 @@ public class UpdateChecker extends AsyncTask<Void, Void, Void> {
             //System.out.println("Current version:" + appversioncode + "\nserverappversion:" + versioncode);
 
             //Compare Version codes
-            if (appversioncode <= versioncode) {
+            if (appversioncode < versioncode) {
                 //If update is available download new application and install that application
 
                 //Url to download updated application

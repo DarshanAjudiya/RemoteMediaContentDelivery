@@ -104,8 +104,8 @@ public class Parser {
 						Double cwidth = null;
 						String uri = null;
 						String shadow = null;
-						Integer scaleX = null;
-						Integer scaleY = null;
+						Double scaleX = null;
+						Double scaleY = null;
 						Integer z_index = null;
 						Integer angle = null;
 						Double opacity = null;
@@ -127,9 +127,9 @@ public class Parser {
 						if (component.has("shadow"))
 							shadow = component.getString("shadow");
 						if (component.has("scaleX"))
-							scaleX = component.getInt("scaleX");
+							scaleX = component.getDouble("scaleX");
 						if (component.has("scaleY"))
-							scaleY = component.getInt("scaleY");
+							scaleY = component.getDouble("scaleY");
 						if (component.has("z_index"))
 							z_index = component.getInt("z_index");
 						if (component.has("angle"))

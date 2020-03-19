@@ -35,8 +35,8 @@ public class ComponentModel {
     private Double height = null;
     private String uri = null;      //contains file name
     private String shadow = null;
-    private Integer scaleX = null;
-    private Integer scaleY = null;
+    private Double scaleX = null;
+    private Double scaleY = null;
     private Integer z_index = null;
     private Integer angle = null;   //rotation angle
     private Double opacity = null;  //transparency
@@ -158,19 +158,19 @@ public class ComponentModel {
         this.shadow = shadow;
     }
 
-    public Integer getScaleX() {
+    public Double getScaleX() {
         return scaleX;
     }
 
-    public void setScaleX(Integer scaleX) {
+    public void setScaleX(Double scaleX) {
         this.scaleX = scaleX;
     }
 
-    public Integer getScaleY() {
+    public Double getScaleY() {
         return scaleY;
     }
 
-    public void setScaleY(Integer scaleY) {
+    public void setScaleY(Double scaleY) {
         this.scaleY = scaleY;
     }
 
@@ -235,7 +235,7 @@ public class ComponentModel {
     }
 
     //constructor to initialize basic instance variables
-    public ComponentModel(Integer id, String type, Integer left, Integer top, Double width, Double height, String uri, String shadow, Integer scaleX, Integer scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, AnimationModel enter_animation, AnimationModel exit_animation) {
+    public ComponentModel(Integer id, String type, Integer left, Integer top, Double width, Double height, String uri, String shadow, Double scaleX, Double scaleY, Integer z_index, Integer angle, Double opacity, String onClick, Boolean is_animate, AnimationModel enter_animation, AnimationModel exit_animation) {
         this.id = id;
         this.type = type;
         this.left = left;
@@ -301,6 +301,14 @@ public class ComponentModel {
             view = createWebview();
         }
 
+        //scale image horizontally
+        if (scaleX != null)
+            width = width * scaleX;
+
+
+        //scale image vertically
+        if (scaleY != null)
+            height = height *scaleY;
         //initialize Layout parameter
         FrameLayout.LayoutParams comonentlayoutparam = new FrameLayout.LayoutParams(width.intValue(), height.intValue());
         if (is_animate) {
@@ -385,13 +393,7 @@ public class ComponentModel {
                 Glide.with(context).load(imagefile).into(imageview);
             }
 
-            //scale image horizontally
-            if (scaleX != null)
-                imageview.setX(scaleX);
 
-            //scale image vertically
-            if (scaleY != null)
-                imageview.setY(scaleY);
 
             //rotate image
             if (angle != null)

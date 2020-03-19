@@ -32,7 +32,8 @@ public class getData extends AsyncTask<Void, Void, Void> {
         helper = new DatabaseHelper(context);
         try {
             //Get URL specified URL
-            URL url = new URL("https://jsonblob.com/api/212f0a09-5319-11ea-8e7b-552f2d86fbba");
+           // URL url = new URL("https://jsonblob.com/api/212f0a09-5319-11ea-8e7b-552f2d86fbba");
+            URL url = new URL("https://jsonblob.com/api/8de1b244-6a83-11ea-92f8-efcc68f65654");
 
             //Establish HttpUrlConnection and get InputStream of created connection
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -47,7 +48,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
                 data = data + line;
                 line = bufferedReader.readLine();
             }
-            //System.out.println(data);
+            System.out.println(data);
 
             //parse Json data retrieved from server to java object
             PlaylistModel[] myplaylist = null;
@@ -59,6 +60,7 @@ public class getData extends AsyncTask<Void, Void, Void> {
             }
 
             //Store data retrieved from server  into Database
+            if (myplaylist!=null)
             for (PlaylistModel list : myplaylist) {
                 list.printall();
                 int count = helper.insert_playlist(list);

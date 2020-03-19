@@ -196,7 +196,8 @@ public class SlideModel implements Serializable {
         layout.setLayoutParams(layoutParams);
 
         //set background color
-        layout.setBackgroundColor(Color.parseColor(bgcolor));
+        if (bgcolor!=null)
+            layout.setBackgroundColor(Color.parseColor(bgcolor));
 
         //set Background image
         /*File bg_image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), bgimage+".jpg");
@@ -217,7 +218,7 @@ public class SlideModel implements Serializable {
         }*/
 
         //layout.setBackground(ContextCompat.getDrawable(context, ));
-        layout.setBackgroundResource(R.drawable.a);
+       // layout.setBackgroundResource(R.drawable.a);
 
         //initialize Animation object
         if (animate) {
